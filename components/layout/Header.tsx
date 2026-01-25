@@ -37,7 +37,7 @@ function HeaderContent() {
             href="/"
             className="text-xl font-semibold tracking-tight text-foreground hover:text-muted-foreground transition-colors"
           >
-            When1.Life
+            when1life
           </Link>
 
           {/* Desktop Navigation */}

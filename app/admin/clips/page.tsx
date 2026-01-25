@@ -54,7 +54,7 @@ export default function ClipsPage() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
+        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
@@ -64,14 +64,14 @@ export default function ClipsPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">클립 관리</h1>
-          <p className="text-sm text-[var(--text-tertiary)] mt-1">
+          <h1 className="text-2xl font-bold text-foreground">클립 관리</h1>
+          <p className="text-sm text-muted-foreground mt-1">
             총 {filteredClips.length}개의 클립
           </p>
         </div>
         <Link
           href="/admin/clips/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-colors"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
         >
           <Plus className="w-4 h-4" />
           새 클립
@@ -81,21 +81,21 @@ export default function ClipsPage() {
       {/* Filters */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="검색..."
-            className="w-full pl-10 pr-4 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent)]"
+            className="w-full pl-10 pr-4 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           />
         </div>
         <div className="relative">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-tertiary)]" />
+          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="pl-10 pr-8 py-2 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)] appearance-none cursor-pointer"
+            className="pl-10 pr-8 py-2 bg-muted border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer"
           >
             <option value="all">전체 카테고리</option>
             <option value="idea">아이디어</option>
@@ -106,40 +106,40 @@ export default function ClipsPage() {
       </div>
 
       {/* Clips Table */}
-      <div className="bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg overflow-hidden">
+      <div className="bg-card border border-border rounded-lg overflow-hidden">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-[var(--border)]">
-                <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider">
+              <tr className="border-b border-border">
+                <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   내용
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider hidden sm:table-cell">
+                <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">
                   카테고리
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider hidden md:table-cell">
+                <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">
                   출처
                 </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider hidden lg:table-cell">
+                <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">
                   생성일
                 </th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider">
+                <th className="text-right px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
                   작업
                 </th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--border)]">
+            <tbody className="divide-y divide-border">
               {filteredClips.map((clip) => (
                 <tr
                   key={clip.id}
-                  className="hover:bg-[var(--bg-hover)] transition-colors"
+                  className="hover:bg-muted/50 transition-colors"
                 >
                   <td className="px-4 py-3">
-                    <p className="text-sm text-[var(--text-primary)] line-clamp-2">
+                    <p className="text-sm text-foreground line-clamp-2">
                       {clip.content}
                     </p>
                     {clip.summary && (
-                      <p className="text-xs text-[var(--text-tertiary)] mt-1 line-clamp-1">
+                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
                         {clip.summary}
                       </p>
                     )}
@@ -159,12 +159,12 @@ export default function ClipsPage() {
                     )}
                   </td>
                   <td className="px-4 py-3 hidden md:table-cell">
-                    <p className="text-sm text-[var(--text-secondary)] truncate max-w-[150px]">
+                    <p className="text-sm text-muted-foreground truncate max-w-[150px]">
                       {clip.source || '-'}
                     </p>
                   </td>
                   <td className="px-4 py-3 hidden lg:table-cell">
-                    <p className="text-sm text-[var(--text-tertiary)]">
+                    <p className="text-sm text-muted-foreground">
                       {new Date(clip.created_at).toLocaleDateString('ko-KR')}
                     </p>
                   </td>
@@ -172,7 +172,7 @@ export default function ClipsPage() {
                     <div className="flex items-center justify-end gap-1">
                       <Link
                         href={`/admin/clips/${clip.id}/edit`}
-                        className="p-2 text-[var(--text-tertiary)] hover:text-[var(--accent)] hover:bg-[var(--accent-light)] rounded-md transition-colors"
+                        className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
                       >
                         <Pencil className="w-4 h-4" />
                       </Link>
@@ -186,7 +186,7 @@ export default function ClipsPage() {
                           </button>
                           <button
                             onClick={() => setDeleteConfirm(null)}
-                            className="px-2 py-1 text-xs text-[var(--text-secondary)] hover:bg-[var(--bg-hover)] rounded"
+                            className="px-2 py-1 text-xs text-muted-foreground hover:bg-muted rounded"
                           >
                             취소
                           </button>
@@ -194,7 +194,7 @@ export default function ClipsPage() {
                       ) : (
                         <button
                           onClick={() => setDeleteConfirm(clip.id)}
-                          className="p-2 text-[var(--text-tertiary)] hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-md transition-colors"
+                          className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-md transition-colors"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
@@ -209,7 +209,7 @@ export default function ClipsPage() {
 
         {filteredClips.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-[var(--text-tertiary)]">클립이 없습니다</p>
+            <p className="text-muted-foreground">클립이 없습니다</p>
           </div>
         )}
       </div>

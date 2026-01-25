@@ -86,18 +86,18 @@ export function ClipForm({ clip, isNew }: ClipFormProps) {
         <div className="flex items-center gap-4">
           <Link
             href="/admin/clips"
-            className="p-2 text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded-md transition-colors"
+            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </Link>
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">
+          <h1 className="text-2xl font-bold text-foreground">
             {isNew ? '새 클립' : '클립 수정'}
           </h1>
         </div>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-colors disabled:opacity-50"
+          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
         >
           <Save className="w-4 h-4" />
           {isSubmitting ? '저장 중...' : '저장'}
@@ -111,10 +111,10 @@ export function ClipForm({ clip, isNew }: ClipFormProps) {
         </div>
       )}
 
-      <div className="space-y-6 bg-[var(--bg-secondary)] border border-[var(--border)] rounded-lg p-6">
+      <div className="space-y-6 bg-card border border-border rounded-lg p-6">
         {/* Content */}
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             내용 <span className="text-red-500">*</span>
           </label>
           <textarea
@@ -122,20 +122,20 @@ export function ClipForm({ clip, isNew }: ClipFormProps) {
             rows={6}
             value={formData.content}
             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-            className="w-full px-4 py-3 bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent)] resize-none"
+            className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
             placeholder="클립 내용을 입력하세요"
           />
         </div>
 
         {/* Content Type */}
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             콘텐츠 유형
           </label>
           <select
             value={formData.content_type}
             onChange={(e) => setFormData({ ...formData, content_type: e.target.value as 'text' | 'link' | 'image' })}
-            className="w-full px-4 py-2 bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)]"
+            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           >
             <option value="text">텍스트</option>
             <option value="link">링크</option>
@@ -145,13 +145,13 @@ export function ClipForm({ clip, isNew }: ClipFormProps) {
 
         {/* Category */}
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             카테고리
           </label>
           <select
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            className="w-full px-4 py-2 bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] focus:outline-none focus:border-[var(--accent)]"
+            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
           >
             <option value="">선택 안함</option>
             <option value="idea">아이디어</option>
@@ -162,56 +162,56 @@ export function ClipForm({ clip, isNew }: ClipFormProps) {
 
         {/* Source */}
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             출처
           </label>
           <input
             type="text"
             value={formData.source}
             onChange={(e) => setFormData({ ...formData, source: e.target.value })}
-            className="w-full px-4 py-2 bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent)]"
+            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             placeholder="출처 URL 또는 이름"
           />
         </div>
 
         {/* Summary */}
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             요약
           </label>
           <input
             type="text"
             value={formData.summary}
             onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-            className="w-full px-4 py-2 bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent)]"
+            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             placeholder="간략한 요약"
           />
         </div>
 
         {/* Tags */}
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             태그
           </label>
           <input
             type="text"
             value={formData.tags}
             onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-            className="w-full px-4 py-2 bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent)]"
+            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             placeholder="쉼표로 구분 (예: AI, 스타트업, 기술)"
           />
         </div>
 
         {/* Image URL */}
         <div>
-          <label className="block text-sm font-medium text-[var(--text-primary)] mb-2">
+          <label className="block text-sm font-medium text-foreground mb-2">
             이미지 URL
           </label>
           <input
             type="url"
             value={formData.image_url}
             onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-            className="w-full px-4 py-2 bg-[var(--bg-primary)] border border-[var(--border)] rounded-lg text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] focus:outline-none focus:border-[var(--accent)]"
+            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
             placeholder="https://example.com/image.jpg"
           />
         </div>
