@@ -11,7 +11,7 @@ export function NavSection({ title, children }: NavSectionProps) {
   return (
     <div className="py-2">
       {title && (
-        <h3 className="px-3 mb-2 text-xs font-medium text-[var(--text-tertiary)] uppercase tracking-wider">
+        <h3 className="px-3 mb-1.5 text-[10px] font-medium text-[var(--text-tertiary)] uppercase tracking-widest">
           {title}
         </h3>
       )}

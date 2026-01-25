@@ -22,7 +22,7 @@ export function ClipGrid({ clips }: ClipGridProps) {
   }
 
   return (
-    <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+    <div className="grid gap-5 sm:grid-cols-2 xl:grid-cols-3">
       {clips.map((clip) => (
         <ClipCard key={clip.id} clip={clip} view="grid" />
       ))}

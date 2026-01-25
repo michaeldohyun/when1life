@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, useRef } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase';
 
@@ -20,7 +20,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const hasRedirected = useRef(false);
 
   const adminEmails = (process.env.NEXT_PUBLIC_ADMIN_EMAILS || '')
     .split(',')
@@ -50,7 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     // 세션 변경 감지
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange(async (event, session) => {
+    } = supabase.auth.onAuthStateChange(async (_event, session) => {
       // 관리자가 아니면 로그아웃
       if (
         session?.user?.email &&
@@ -65,30 +64,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(session);
       setUser(session?.user ?? null);
       setIsLoading(false);
-
-      // Implicit flow: 로그인 성공 시 /admin으로 리다이렉트
-      // URL에 access_token이 있거나 SIGNED_IN 이벤트일 때
-      if (event === 'SIGNED_IN' && session && !hasRedirected.current) {
-        const hash = window.location.hash;
-        const isOAuthCallback = hash.includes('access_token') || hash.includes('refresh_token');
-
-        if (isOAuthCallback) {
-          hasRedirected.current = true;
-          // URL hash 제거 후 /admin으로 이동
-          window.location.href = '/admin';
-        }
-      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
   const signInWithGoogle = async () => {
-    // Implicit flow: 현재 origin으로 리다이렉트 (callback route 없이)
+    // PKCE flow: callback route로 리다이렉트
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: window.location.origin,
+        redirectTo: `${window.location.origin}/auth/callback`,
       },
     });
     return { error: error as Error | null };

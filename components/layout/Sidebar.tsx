@@ -6,6 +6,7 @@ import { NavItem } from '@/components/navigation/NavItem';
 import { NavSection } from '@/components/navigation/NavSection';
 import { ThemeToggle } from '@/components/ui/ThemeToggle';
 import { useSidebar } from '@/contexts/SidebarContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface SidebarProps {
   tags?: string[];
@@ -13,6 +14,7 @@ interface SidebarProps {
 
 export function Sidebar({ tags = [] }: SidebarProps) {
   const { isOpen, close } = useSidebar();
+  const { isAdmin } = useAuth();
 
   return (
     <>
@@ -52,12 +54,12 @@ export function Sidebar({ tags = [] }: SidebarProps) {
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto py-2 px-2">
+        <div className="flex-1 overflow-y-auto py-3 px-2">
           <NavSection>
             <NavItem href="/" label="홈" icon={Home} />
           </NavSection>
 
-          <div className="h-px bg-[var(--border)] mx-2 my-2" />
+          <div className="h-px bg-[var(--border)] mx-2 my-3" />
 
           <NavSection title="카테고리">
             <NavItem href="/?category=idea" label="아이디어" icon={Lightbulb} />
@@ -67,7 +69,7 @@ export function Sidebar({ tags = [] }: SidebarProps) {
 
           {tags.length > 0 && (
             <>
-              <div className="h-px bg-[var(--border)] mx-2 my-2" />
+              <div className="h-px bg-[var(--border)] mx-2 my-3" />
               <NavSection title="태그">
                 {tags.slice(0, 10).map((tag) => (
                   <NavItem key={tag} href={`/?tag=${tag}`} label={`#${tag}`} />
@@ -78,7 +80,16 @@ export function Sidebar({ tags = [] }: SidebarProps) {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-[var(--border)] p-2">
+        <div className="border-t border-[var(--border)] p-2 space-y-1">
+          {isAdmin && (
+            <Link
+              href="/admin"
+              className="flex items-center gap-3 px-3 py-2 text-sm text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] rounded-md transition-colors"
+            >
+              <Settings className="w-4 h-4" />
+              <span>관리자</span>
+            </Link>
+          )}
           <ThemeToggle />
         </div>
       </aside>

@@ -18,7 +18,7 @@ export function ClipCard({ clip, view = 'grid' }: ClipCardProps) {
 
   if (view === 'list') {
     return (
-      <article className="bg-[var(--bg-primary)] rounded-lg border border-[var(--border)] p-4 hover:border-[var(--accent)] transition-colors">
+      <article className="bg-[var(--bg-primary)] rounded-lg border border-[var(--border)] p-4 hover:border-[var(--accent)] hover:shadow-sm transition-all duration-200">
         <div className="flex items-start gap-4">
           <div className="flex-1 min-w-0">
             <p className="text-[var(--text-primary)] whitespace-pre-wrap break-words line-clamp-2">
@@ -36,31 +36,31 @@ export function ClipCard({ clip, view = 'grid' }: ClipCardProps) {
   }
 
   return (
-    <article className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border)] p-5 hover:border-[var(--accent)] transition-colors group">
-      <div className="mb-3">
-        <p className="text-[var(--text-primary)] whitespace-pre-wrap break-words">
+    <article className="bg-[var(--bg-primary)] rounded-xl border border-[var(--border)] p-6 hover:border-[var(--accent)] hover:shadow-md transition-all duration-200 group">
+      <div className="mb-4">
+        <p className="text-[var(--text-primary)] whitespace-pre-wrap break-words leading-relaxed">
           {clip.content}
         </p>
       </div>
 
       {clip.summary && (
-        <p className="text-sm text-[var(--text-secondary)] mt-3 italic">
+        <p className="text-sm text-[var(--text-secondary)] mt-4 italic leading-relaxed">
           {clip.summary}
         </p>
       )}
 
       {clip.source && (
-        <p className="text-sm text-[var(--text-tertiary)] mt-2">
+        <p className="text-sm text-[var(--text-tertiary)] mt-3">
           - {clip.source}
         </p>
       )}
 
       {clip.tags && clip.tags.length > 0 && (
-        <div className="flex flex-wrap gap-1.5 mt-3">
+        <div className="flex flex-wrap gap-2 mt-4">
           {clip.tags.map((tag) => (
             <span
               key={tag}
-              className="px-2 py-0.5 bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-xs rounded-full hover:bg-[var(--accent-light)] hover:text-[var(--accent)] transition-colors cursor-pointer"
+              className="px-2.5 py-1 bg-[var(--bg-secondary)] text-[var(--text-secondary)] text-xs rounded-full hover:bg-[var(--accent-light)] hover:text-[var(--accent)] transition-colors cursor-pointer"
             >
               #{tag}
             </span>
@@ -69,7 +69,7 @@ export function ClipCard({ clip, view = 'grid' }: ClipCardProps) {
       )}
 
       {clip.image_url && (
-        <div className="mt-3">
+        <div className="mt-4">
           <div className="relative rounded-lg overflow-hidden max-h-64">
             <img
               src={clip.image_url}
@@ -80,7 +80,7 @@ export function ClipCard({ clip, view = 'grid' }: ClipCardProps) {
         </div>
       )}
 
-      <div className="flex items-center justify-between mt-4 pt-3 border-t border-[var(--border-light)]">
+      <div className="flex items-center justify-between mt-5 pt-4 border-t border-[var(--border)]">
         <span className="text-xs text-[var(--text-tertiary)]">
           {categoryName}
         </span>

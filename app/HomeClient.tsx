@@ -40,15 +40,15 @@ export function HomeClient({ clips, category }: HomeClientProps) {
         title={pageTitle}
       />
 
-      <main className="pt-14 px-4 sm:px-6 py-6">
+      <main className="pt-14 px-4 sm:px-6 lg:px-8 py-8">
         {/* Page Title */}
-        <div className="mb-6">
-          <h1 className="text-2xl font-semibold text-[var(--text-primary)]">
+        <div className="mb-8">
+          <h1 className="text-xl font-semibold text-[var(--text-primary)]">
             {pageTitle}
           </h1>
-          <p className="text-sm text-[var(--text-tertiary)] mt-1">
+          <p className="text-xs text-[var(--text-tertiary)] mt-1.5">
             {filteredClips.length}개의 클립
-            {searchQuery && ` (검색: "${searchQuery}")`}
+            {searchQuery && ` · 검색: "${searchQuery}"`}
           </p>
         </div>
 
