@@ -5,10 +5,8 @@ const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
 export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
-// Clipper 스키마 접근용 클라이언트
 export const clipperDb = supabase.schema('clipper');
 
-// Clip 타입 정의
 export interface Clip {
   id: string;
   chat_id: string;
@@ -23,22 +21,12 @@ export interface Clip {
   created_at: string;
 }
 
-// Category 타입 정의
 export interface Category {
   id: string;
   name: string;
-  emoji: string;
   description: string | null;
 }
 
-// 카테고리 이모지 매핑
-export const CATEGORY_EMOJI: Record<string, string> = {
-  idea: '💡',
-  article: '📚',
-  quote: '💬',
-};
-
-// 카테고리 이름 매핑
 export const CATEGORY_NAME: Record<string, string> = {
   idea: '아이디어',
   article: '읽을거리',
