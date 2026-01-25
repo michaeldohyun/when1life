@@ -1,25 +1,24 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { AppSidebar } from '@/components/layout/AppSidebar';
-import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
+import { Header } from '@/components/layout/Header';
+import { Footer } from '@/components/layout/Footer';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isAdminPage = pathname.startsWith('/admin');
 
-  // Admin 페이지에서는 Sidebar 없이 전체 폭 사용
+  // Admin 페이지에서는 Header/Footer 없이 표시
   if (isAdminPage) {
     return <>{children}</>;
   }
 
-  // 일반 페이지에서는 Sidebar와 함께 표시
+  // 일반 페이지에서는 Header + Content + Footer 레이아웃
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        {children}
-      </SidebarInset>
-    </SidebarProvider>
+    <div className="min-h-screen flex flex-col">
+      <Header />
+      <main className="flex-1">{children}</main>
+      <Footer />
+    </div>
   );
 }

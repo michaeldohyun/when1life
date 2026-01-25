@@ -2,9 +2,10 @@
 
 import { useState, useMemo } from 'react';
 import { Clip, CATEGORY_NAME } from '@/lib/supabase';
-import { Header } from '@/components/layout/Header';
 import { ClipGrid } from '@/components/clips/ClipGrid';
 import { ClipList } from '@/components/clips/ClipList';
+import { SearchBar } from '@/components/ui/SearchBar';
+import { ViewToggle } from '@/components/ui/ViewToggle';
 
 type ViewMode = 'grid' | 'list';
 
@@ -32,48 +33,32 @@ export function HomeClient({ clips, category }: HomeClientProps) {
   }, [clips, searchQuery]);
 
   return (
-    <div className="min-h-screen flex flex-col">
-      <Header
-        view={view}
-        onViewChange={setView}
-        onSearch={setSearchQuery}
-        title={pageTitle}
-      />
-
-      <main className="flex-1 pt-12 px-5 sm:px-6 lg:px-8 py-6">
-        {/* Page Title */}
-        <div className="mb-6">
-          <div className="flex items-baseline gap-3">
-            <h1 className="text-lg font-semibold text-[var(--text-primary)]">
-              {pageTitle}
-            </h1>
-            <span className="text-xs text-[var(--text-tertiary)] tabular-nums">
-              {filteredClips.length}개
-            </span>
-          </div>
-          {searchQuery && (
-            <p className="text-xs text-[var(--text-tertiary)] mt-1">
-              검색: &quot;{searchQuery}&quot;
-            </p>
-          )}
-        </div>
-
-        {/* Content */}
-        {view === 'grid' ? (
-          <ClipGrid clips={filteredClips} />
-        ) : (
-          <ClipList clips={filteredClips} />
-        )}
-      </main>
-
-      {/* Footer */}
-      <footer className="border-t border-[var(--border-light)] mt-auto">
-        <div className="px-6 py-4 text-center">
-          <p className="text-xs text-[var(--text-tertiary)]">
-            Powered by Clipper Bot
+    <div className="mx-auto max-w-5xl px-6 py-8">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">
+            {pageTitle}
+          </h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {filteredClips.length}개의 클립
+            {searchQuery && ` · "${searchQuery}" 검색 결과`}
           </p>
         </div>
-      </footer>
+        <div className="flex items-center gap-3">
+          <div className="w-full sm:w-64">
+            <SearchBar onSearch={setSearchQuery} placeholder="클립 검색..." />
+          </div>
+          <ViewToggle view={view} onViewChange={setView} />
+        </div>
+      </div>
+
+      {/* Content */}
+      {view === 'grid' ? (
+        <ClipGrid clips={filteredClips} />
+      ) : (
+        <ClipList clips={filteredClips} />
+      )}
     </div>
   );
 }
