@@ -18,7 +18,7 @@ export default function EditClipPage({ params }: EditClipPageProps) {
   useEffect(() => {
     const fetchClip = async () => {
       const { data, error } = await clipperDb
-        .from('Clip')
+        .from('Clips')
         .select('*')
         .eq('id', id)
         .single();

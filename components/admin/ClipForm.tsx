@@ -57,14 +57,14 @@ export function ClipForm({ clip, isNew }: ClipFormProps) {
 
     try {
       if (isNew) {
-        const { error } = await clipperDb.from('Clip').insert({
+        const { error } = await clipperDb.from('Clips').insert({
           ...data,
           chat_id: 'admin', // 관리자가 직접 추가한 클립
         });
         if (error) throw error;
       } else if (clip) {
         const { error } = await clipperDb
-          .from('Clip')
+          .from('Clips')
           .update(data)
           .eq('id', clip.id);
         if (error) throw error;

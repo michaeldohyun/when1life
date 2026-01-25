@@ -19,7 +19,7 @@ export default function ClipsPage() {
   const fetchClips = async () => {
     setIsLoading(true);
     const { data, error } = await clipperDb
-      .from('Clip')
+      .from('Clips')
       .select('*')
       .order('created_at', { ascending: false });
 
@@ -30,7 +30,7 @@ export default function ClipsPage() {
   };
 
   const handleDelete = async (id: string) => {
-    const { error } = await clipperDb.from('Clip').delete().eq('id', id);
+    const { error } = await clipperDb.from('Clips').delete().eq('id', id);
 
     if (!error) {
       setClips(clips.filter((clip) => clip.id !== id));
