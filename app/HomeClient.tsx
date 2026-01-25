@@ -32,7 +32,7 @@ export function HomeClient({ clips, category }: HomeClientProps) {
   }, [clips, searchQuery]);
 
   return (
-    <div className="min-h-screen">
+    <div className="min-h-screen flex flex-col">
       <Header
         view={view}
         onViewChange={setView}
@@ -40,16 +40,22 @@ export function HomeClient({ clips, category }: HomeClientProps) {
         title={pageTitle}
       />
 
-      <main className="pt-14 px-4 sm:px-6 lg:px-8 py-8">
+      <main className="flex-1 pt-12 px-5 sm:px-6 lg:px-8 py-6">
         {/* Page Title */}
-        <div className="mb-8">
-          <h1 className="text-xl font-semibold text-[var(--text-primary)]">
-            {pageTitle}
-          </h1>
-          <p className="text-xs text-[var(--text-tertiary)] mt-1.5">
-            {filteredClips.length}개의 클립
-            {searchQuery && ` · 검색: "${searchQuery}"`}
-          </p>
+        <div className="mb-6">
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-lg font-semibold text-[var(--text-primary)]">
+              {pageTitle}
+            </h1>
+            <span className="text-xs text-[var(--text-tertiary)] tabular-nums">
+              {filteredClips.length}개
+            </span>
+          </div>
+          {searchQuery && (
+            <p className="text-xs text-[var(--text-tertiary)] mt-1">
+              검색: &quot;{searchQuery}&quot;
+            </p>
+          )}
         </div>
 
         {/* Content */}
@@ -61,9 +67,9 @@ export function HomeClient({ clips, category }: HomeClientProps) {
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[var(--border)] mt-auto">
-        <div className="px-6 py-6 text-center">
-          <p className="text-sm text-[var(--text-tertiary)]">
+      <footer className="border-t border-[var(--border-light)] mt-auto">
+        <div className="px-6 py-4 text-center">
+          <p className="text-xs text-[var(--text-tertiary)]">
             Powered by Clipper Bot
           </p>
         </div>

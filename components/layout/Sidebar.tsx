@@ -21,7 +21,7 @@ export function Sidebar({ tags = [] }: SidebarProps) {
       {/* Mobile Overlay */}
       {isOpen && (
         <div
-          className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 lg:hidden"
           onClick={close}
           aria-hidden="true"
         />
@@ -30,7 +30,7 @@ export function Sidebar({ tags = [] }: SidebarProps) {
       {/* Sidebar */}
       <aside
         className={`
-          fixed top-0 left-0 h-screen w-60 bg-[var(--bg-sidebar)] border-r border-[var(--border)]
+          fixed top-0 left-0 h-screen w-56 bg-[var(--bg-sidebar)] border-r border-[var(--border)]
           flex flex-col z-50
           transform transition-transform duration-300 ease-in-out
           lg:translate-x-0
@@ -38,28 +38,28 @@ export function Sidebar({ tags = [] }: SidebarProps) {
         `}
       >
         {/* Logo */}
-        <div className="flex items-center justify-between h-14 px-4 border-b border-[var(--border)]">
+        <div className="flex items-center justify-between h-12 px-4 border-b border-[var(--border-light)]">
           <Link href="/" className="flex items-center gap-2">
-            <span className="text-lg font-semibold text-[var(--text-primary)]">
+            <span className="text-base font-semibold text-[var(--text-primary)]">
               When1.Life
             </span>
           </Link>
           <button
             onClick={close}
-            className="p-1.5 rounded-md text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] lg:hidden"
+            className="p-1.5 rounded-md text-[var(--text-tertiary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] lg:hidden transition-colors"
             aria-label="사이드바 닫기"
           >
-            <X className="w-5 h-5" />
+            <X className="w-4 h-4" />
           </button>
         </div>
 
         {/* Navigation */}
-        <div className="flex-1 overflow-y-auto py-3 px-2">
+        <div className="flex-1 overflow-y-auto py-2 px-2">
           <NavSection>
             <NavItem href="/" label="홈" icon={Home} />
           </NavSection>
 
-          <div className="h-px bg-[var(--border)] mx-2 my-3" />
+          <div className="h-px bg-[var(--border-light)] mx-2 my-2" />
 
           <NavSection title="카테고리">
             <NavItem href="/?category=idea" label="아이디어" icon={Lightbulb} />
@@ -69,7 +69,7 @@ export function Sidebar({ tags = [] }: SidebarProps) {
 
           {tags.length > 0 && (
             <>
-              <div className="h-px bg-[var(--border)] mx-2 my-3" />
+              <div className="h-px bg-[var(--border-light)] mx-2 my-2" />
               <NavSection title="태그">
                 {tags.slice(0, 10).map((tag) => (
                   <NavItem key={tag} href={`/?tag=${tag}`} label={`#${tag}`} />
@@ -80,7 +80,7 @@ export function Sidebar({ tags = [] }: SidebarProps) {
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-[var(--border)] p-2 space-y-1">
+        <div className="border-t border-[var(--border-light)] p-2 space-y-0.5">
           {isAdmin && (
             <Link
               href="/admin"

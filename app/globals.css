@@ -45,6 +45,27 @@
   --category-article: #3b82f6;
   --category-quote: #8b5cf6;
 
+  /* Gray Scale (Linear Style) */
+  --gray-50: #fafafa;
+  --gray-100: #f4f4f5;
+  --gray-200: #e4e4e7;
+  --gray-300: #d4d4d8;
+  --gray-400: #a1a1aa;
+  --gray-500: #71717a;
+  --gray-600: #52525b;
+  --gray-700: #3f3f46;
+  --gray-800: #27272a;
+  --gray-900: #18181b;
+
+  /* Extended Shadows */
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-hover: 0 8px 16px -4px rgba(0,0,0,0.08);
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.04);
+
+  /* Focus Ring */
+  --ring-color: rgba(94, 106, 210, 0.3);
+  --ring-width: 3px;
+
   /* Legacy Support */
   --background: var(--bg-primary);
   --foreground: var(--text-primary);
@@ -68,6 +89,12 @@
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+
+  --shadow-xs: 0 1px 2px rgba(0,0,0,0.08);
+  --shadow-hover: 0 8px 16px -4px rgba(0,0,0,0.15);
+  --shadow-card: 0 2px 8px rgba(0,0,0,0.08);
+
+  --ring-color: rgba(94, 106, 210, 0.4);
 
   --accent-light: rgba(94, 106, 210, 0.15);
 

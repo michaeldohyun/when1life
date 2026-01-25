@@ -38,17 +38,17 @@ function NavItemInner({ href, label, icon: Icon, count, isActive: isActiveProp }
       href={href}
       onClick={handleClick}
       className={`
-        flex items-center gap-3 px-3 py-2 rounded-md text-sm transition-colors
+        relative flex items-center gap-3 px-3 py-1.5 rounded-md text-sm transition-all duration-150
         ${isActive
-          ? 'bg-[var(--accent-light)] text-[var(--accent)]'
+          ? 'bg-[var(--accent-light)] text-[var(--accent)] font-medium before:absolute before:left-0 before:top-1/2 before:-translate-y-1/2 before:w-0.5 before:h-4 before:bg-[var(--accent)] before:rounded-full'
           : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)]'
         }
       `}
     >
-      {Icon && <Icon className="w-4 h-4 shrink-0" />}
+      {Icon && <Icon className={`w-4 h-4 shrink-0 ${isActive ? 'text-[var(--accent)]' : ''}`} />}
       <span className="flex-1 truncate">{label}</span>
       {count !== undefined && (
-        <span className={`text-xs ${isActive ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]'}`}>
+        <span className={`text-xs tabular-nums ${isActive ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]'}`}>
           {count}
         </span>
       )}
@@ -59,7 +59,7 @@ function NavItemInner({ href, label, icon: Icon, count, isActive: isActiveProp }
 export function NavItem(props: NavItemProps) {
   return (
     <Suspense fallback={
-      <div className="flex items-center gap-3 px-3 py-2 rounded-md text-sm text-[var(--text-secondary)]">
+      <div className="flex items-center gap-3 px-3 py-1.5 rounded-md text-sm text-[var(--text-secondary)]">
         {props.icon && <props.icon className="w-4 h-4 shrink-0" />}
         <span className="flex-1 truncate">{props.label}</span>
       </div>
