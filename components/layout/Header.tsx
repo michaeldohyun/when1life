@@ -4,17 +4,16 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react';
-import { Menu, X, Home, Lightbulb, BookOpen, Quote, Settings, Search } from 'lucide-react';
+import { Menu, X } from 'lucide-react';
 import { ThemeToggleIcon } from '@/components/ui/ThemeToggle';
-import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
 const navigation = [
-  { name: '홈', href: '/', icon: Home },
-  { name: '아이디어', href: '/?category=idea', icon: Lightbulb, category: 'idea' },
-  { name: '읽을거리', href: '/?category=article', icon: BookOpen, category: 'article' },
-  { name: '명언', href: '/?category=quote', icon: Quote, category: 'quote' },
+  { name: '홈', href: '/' },
+  { name: '아이디어', href: '/?category=idea', category: 'idea' },
+  { name: '읽을거리', href: '/?category=article', category: 'article' },
+  { name: '명언', href: '/?category=quote', category: 'quote' },
 ];
 
 function HeaderContent() {
@@ -22,7 +21,6 @@ function HeaderContent() {
   const searchParams = useSearchParams();
   const currentCategory = searchParams.get('category');
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-  const { isAdmin } = useAuth();
 
   const isActive = (item: typeof navigation[0]) => {
     if (item.href === '/') {
@@ -49,30 +47,15 @@ function HeaderContent() {
                 key={item.name}
                 href={item.href}
                 className={cn(
-                  "text-sm font-medium transition-colors flex items-center gap-1.5",
+                  "text-sm font-medium transition-colors",
                   isActive(item)
                     ? 'text-primary'
                     : 'text-muted-foreground hover:text-foreground'
                 )}
               >
-                <item.icon className="w-4 h-4" />
                 {item.name}
               </Link>
             ))}
-            {isAdmin && (
-              <Link
-                href="/admin"
-                className={cn(
-                  "text-sm font-medium transition-colors flex items-center gap-1.5",
-                  pathname.startsWith('/admin')
-                    ? 'text-primary'
-                    : 'text-muted-foreground hover:text-foreground'
-                )}
-              >
-                <Settings className="w-4 h-4" />
-                관리자
-              </Link>
-            )}
             <ThemeToggleIcon />
           </div>
 
@@ -104,31 +87,15 @@ function HeaderContent() {
                   href={item.href}
                   onClick={() => setIsMobileMenuOpen(false)}
                   className={cn(
-                    "px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
+                    "px-3 py-2 rounded-lg text-sm font-medium transition-colors",
                     isActive(item)
                       ? 'text-primary bg-primary/10'
                       : 'text-muted-foreground hover:text-foreground hover:bg-accent'
                   )}
                 >
-                  <item.icon className="w-4 h-4" />
                   {item.name}
                 </Link>
               ))}
-              {isAdmin && (
-                <Link
-                  href="/admin"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                  className={cn(
-                    "px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2",
-                    pathname.startsWith('/admin')
-                      ? 'text-primary bg-primary/10'
-                      : 'text-muted-foreground hover:text-foreground hover:bg-accent'
-                  )}
-                >
-                  <Settings className="w-4 h-4" />
-                  관리자
-                </Link>
-              )}
             </div>
           </div>
         )}
