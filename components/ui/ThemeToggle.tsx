@@ -2,6 +2,8 @@
 
 import { useTheme } from '@/contexts/ThemeContext';
 import { Sun, Moon, Monitor } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { SidebarMenuButton } from '@/components/ui/sidebar';
 
 export function ThemeToggle() {
   const { theme, setTheme } = useTheme();
@@ -36,14 +38,13 @@ export function ThemeToggle() {
   };
 
   return (
-    <button
+    <SidebarMenuButton
       onClick={cycleTheme}
-      className="flex items-center gap-2 px-3 py-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors w-full text-left text-sm"
       aria-label={`현재: ${getLabel()}. 클릭하여 테마 변경`}
     >
       {getIcon()}
       <span>{getLabel()}</span>
-    </button>
+    </SidebarMenuButton>
   );
 }
 
@@ -55,9 +56,10 @@ export function ThemeToggleIcon() {
   };
 
   return (
-    <button
+    <Button
+      variant="ghost"
+      size="icon"
       onClick={toggleTheme}
-      className="p-2 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] transition-colors"
       aria-label={resolvedTheme === 'dark' ? '라이트 모드로 전환' : '다크 모드로 전환'}
     >
       {resolvedTheme === 'dark' ? (
@@ -65,6 +67,6 @@ export function ThemeToggleIcon() {
       ) : (
         <Moon className="w-5 h-5" />
       )}
-    </button>
+    </Button>
   );
 }

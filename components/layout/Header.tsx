@@ -1,10 +1,10 @@
 'use client';
 
-import { Menu } from 'lucide-react';
 import { SearchBar } from '@/components/ui/SearchBar';
 import { ViewToggle } from '@/components/ui/ViewToggle';
 import { ThemeToggleIcon } from '@/components/ui/ThemeToggle';
-import { useSidebar } from '@/contexts/SidebarContext';
+import { SidebarTrigger } from '@/components/ui/sidebar';
+import { Separator } from '@/components/ui/separator';
 
 type ViewMode = 'grid' | 'list';
 
@@ -16,22 +16,16 @@ interface HeaderProps {
 }
 
 export function Header({ view, onViewChange, onSearch, title }: HeaderProps) {
-  const { open } = useSidebar();
-
   return (
-    <header className="fixed top-0 right-0 left-0 lg:left-56 h-12 bg-[var(--bg-primary)]/80 backdrop-blur-md border-b border-[var(--border-light)] shadow-sm z-30">
+    <header className="sticky top-0 h-14 bg-background/80 backdrop-blur-md border-b z-30">
       <div className="h-full px-4 flex items-center gap-3">
         {/* Mobile Menu Button */}
-        <button
-          onClick={open}
-          className="p-1.5 -ml-1 rounded-md text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--bg-hover)] lg:hidden transition-colors"
-          aria-label="메뉴 열기"
-        >
-          <Menu className="w-5 h-5" />
-        </button>
+        <SidebarTrigger className="md:hidden" />
+
+        <Separator orientation="vertical" className="h-6 md:hidden" />
 
         {/* Title (Mobile) */}
-        <h1 className="font-medium text-sm text-[var(--text-primary)] lg:hidden truncate">
+        <h1 className="font-medium text-sm text-foreground md:hidden truncate">
           {title || 'When1.Life'}
         </h1>
 
@@ -46,7 +40,7 @@ export function Header({ view, onViewChange, onSearch, title }: HeaderProps) {
         {/* Actions */}
         <div className="flex items-center gap-1">
           <ViewToggle view={view} onViewChange={onViewChange} />
-          <div className="hidden lg:block">
+          <div className="hidden md:block">
             <ThemeToggleIcon />
           </div>
         </div>

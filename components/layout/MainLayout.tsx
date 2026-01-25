@@ -1,7 +1,8 @@
 'use client';
 
 import { usePathname } from 'next/navigation';
-import { Sidebar } from '@/components/layout/Sidebar';
+import { AppSidebar } from '@/components/layout/AppSidebar';
+import { SidebarProvider, SidebarInset } from '@/components/ui/sidebar';
 
 export function MainLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
@@ -14,9 +15,11 @@ export function MainLayout({ children }: { children: React.ReactNode }) {
 
   // 일반 페이지에서는 Sidebar와 함께 표시
   return (
-    <div className="flex min-h-screen">
-      <Sidebar />
-      <div className="flex-1 lg:ml-60">{children}</div>
-    </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        {children}
+      </SidebarInset>
+    </SidebarProvider>
   );
 }

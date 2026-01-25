@@ -2,6 +2,8 @@
 
 import { useState, useCallback, useEffect, useRef } from 'react';
 import { Search, X, Command } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface SearchBarProps {
   onSearch?: (query: string) => void;
@@ -42,16 +44,18 @@ export function SearchBar({ onSearch, placeholder = '검색...' }: SearchBarProp
 
   return (
     <div
-      className={`
-        relative flex items-center gap-2 px-3 py-1.5 rounded-lg
-        bg-[var(--bg-tertiary)] border transition-all duration-150
-        ${isFocused
-          ? 'border-[var(--accent)] ring-2 ring-[var(--ring-color)] bg-[var(--bg-primary)]'
-          : 'border-transparent hover:border-[var(--border)]'
-        }
-      `}
+      className={cn(
+        "relative flex items-center gap-2 px-3 py-1.5 rounded-lg",
+        "bg-muted border transition-all duration-150",
+        isFocused
+          ? 'border-primary ring-2 ring-ring/30 bg-background'
+          : 'border-transparent hover:border-border'
+      )}
     >
-      <Search className={`w-4 h-4 shrink-0 transition-colors ${isFocused ? 'text-[var(--accent)]' : 'text-[var(--text-tertiary)]'}`} />
+      <Search className={cn(
+        "w-4 h-4 shrink-0 transition-colors",
+        isFocused ? 'text-primary' : 'text-muted-foreground'
+      )} />
       <input
         ref={inputRef}
         type="text"
@@ -60,18 +64,19 @@ export function SearchBar({ onSearch, placeholder = '검색...' }: SearchBarProp
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         placeholder={placeholder}
-        className="flex-1 bg-transparent outline-none text-sm text-[var(--text-primary)] placeholder:text-[var(--text-tertiary)] min-w-0"
+        className="flex-1 bg-transparent outline-none text-sm text-foreground placeholder:text-muted-foreground min-w-0"
       />
       {query ? (
-        <button
+        <Button
+          variant="ghost"
+          size="icon-xs"
           onClick={handleClear}
-          className="p-0.5 rounded hover:bg-[var(--bg-hover)] text-[var(--text-tertiary)] hover:text-[var(--text-secondary)] transition-colors"
           aria-label="검색어 지우기"
         >
           <X className="w-3.5 h-3.5" />
-        </button>
+        </Button>
       ) : (
-        <kbd className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] text-[var(--text-tertiary)] bg-[var(--bg-secondary)] rounded border border-[var(--border-light)]">
+        <kbd className="hidden sm:flex items-center gap-0.5 px-1.5 py-0.5 text-[10px] text-muted-foreground bg-background rounded border">
           <Command className="w-2.5 h-2.5" />
           <span>K</span>
         </kbd>
