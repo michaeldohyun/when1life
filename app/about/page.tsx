@@ -3,6 +3,9 @@ import { LinkifiedContent } from '@/components/ui/LinkifiedContent';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
+// 동적 렌더링 강제 (DB 데이터 실시간 반영)
+export const dynamic = 'force-dynamic';
+
 interface TimelineItem {
   year: string;
   title: string;
