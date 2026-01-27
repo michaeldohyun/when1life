@@ -50,8 +50,8 @@ export function ServiceCard({
       <div className="flex items-center gap-3">
         {status !== 'coming' ? (
           <span className="inline-flex items-center gap-1.5 text-xs text-foreground">
-            View Demo
-            <ArrowRight className="w-3 h-3" />
+            View
+            <ArrowRight className="w-3 h-3 text-blue-500" />
           </span>
         ) : (
           <span className="text-xs text-muted-foreground">Coming soon</span>
