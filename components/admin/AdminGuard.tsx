@@ -14,23 +14,21 @@ export function AdminGuard({ children }: AdminGuardProps) {
   const router = useRouter();
 
   useEffect(() => {
-    // 로컬 환경에서는 체크 안함
     if (!isDev && !isLoading && !isAdmin && user) {
       router.push('/');
     }
   }, [isLoading, isAdmin, isDev, router, user]);
 
-  // 로컬 환경에서는 바로 통과
   if (isDev) {
     return <>{children}</>;
   }
 
   if (isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
+      <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-[var(--accent)] border-t-transparent rounded-full animate-spin" />
-          <p className="text-[var(--text-secondary)]">로딩 중...</p>
+          <div className="w-6 h-6 border-2 border-foreground border-t-transparent rounded-full animate-spin" />
+          <p className="text-xs text-muted-foreground">Loading...</p>
         </div>
       </div>
     );
@@ -38,20 +36,20 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
-        <div className="text-center p-8 max-w-md">
-          <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
-            로그인이 필요합니다
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center p-8 max-w-sm">
+          <h1 className="text-lg font-medium text-foreground mb-2">
+            Login Required
           </h1>
-          <p className="text-[var(--text-secondary)] mb-6">
-            관리자 페이지에 접근하려면 Google 계정으로 로그인하세요.
+          <p className="text-sm text-muted-foreground mb-6">
+            Sign in with Google to access admin.
           </p>
           <button
             onClick={() => signInWithGoogle()}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-[var(--accent)] text-white rounded-lg hover:bg-[var(--accent-hover)] transition-colors"
+            className="inline-flex items-center gap-2 px-4 py-2 text-sm bg-foreground text-background hover:bg-foreground/90 transition-colors"
           >
-            <LogIn className="w-5 h-5" />
-            Google로 로그인
+            <LogIn className="w-4 h-4" />
+            Sign in with Google
           </button>
         </div>
       </div>
@@ -60,16 +58,16 @@ export function AdminGuard({ children }: AdminGuardProps) {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[var(--bg-primary)]">
-        <div className="text-center p-8 max-w-md">
-          <h1 className="text-2xl font-bold text-[var(--text-primary)] mb-4">
-            접근 권한 없음
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="text-center p-8 max-w-sm">
+          <h1 className="text-lg font-medium text-foreground mb-2">
+            Access Denied
           </h1>
-          <p className="text-[var(--text-secondary)] mb-2">
-            관리자만 접근할 수 있습니다.
+          <p className="text-sm text-muted-foreground mb-1">
+            Admin access only.
           </p>
-          <p className="text-sm text-[var(--text-tertiary)]">
-            현재 계정: {user.email}
+          <p className="text-xs text-muted-foreground">
+            {user.email}
           </p>
         </div>
       </div>

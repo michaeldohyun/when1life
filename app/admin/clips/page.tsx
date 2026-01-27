@@ -1,15 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Clip, clipperDb, CATEGORY_NAME } from '@/lib/supabase';
-import { Pencil, Trash2, Plus, Search, Filter } from 'lucide-react';
+import { Clip, clipperDb } from '@/lib/supabase';
+import { Pencil, Trash2, Plus, Search } from 'lucide-react';
 import Link from 'next/link';
 
 export default function ClipsPage() {
   const [clips, setClips] = useState<Clip[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
-  const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [deleteConfirm, setDeleteConfirm] = useState<string | null>(null);
 
   useEffect(() => {
@@ -39,177 +38,113 @@ export default function ClipsPage() {
   };
 
   const filteredClips = clips.filter((clip) => {
-    const matchesSearch =
-      !searchQuery ||
-      clip.content.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      clip.summary?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      clip.source?.toLowerCase().includes(searchQuery.toLowerCase());
-
-    const matchesCategory =
-      categoryFilter === 'all' || clip.category === categoryFilter;
-
-    return matchesSearch && matchesCategory;
+    if (!searchQuery) return true;
+    const query = searchQuery.toLowerCase();
+    return (
+      clip.content.toLowerCase().includes(query) ||
+      clip.summary?.toLowerCase().includes(query) ||
+      clip.source?.toLowerCase().includes(query)
+    );
   });
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin" />
+        <div className="w-5 h-5 border-2 border-foreground border-t-transparent rounded-full animate-spin" />
       </div>
     );
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-4xl">
       {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+      <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-foreground">클립 관리</h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            총 {filteredClips.length}개의 클립
+          <h1 className="text-lg font-medium text-foreground">Clips</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            {filteredClips.length} items
           </p>
         </div>
         <Link
           href="/admin/clips/new"
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+          className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs bg-foreground text-background hover:bg-foreground/90 transition-colors"
         >
-          <Plus className="w-4 h-4" />
-          새 클립
+          <Plus className="w-3.5 h-3.5" />
+          New
         </Link>
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <input
-            type="text"
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="검색..."
-            className="w-full pl-10 pr-4 py-2 bg-muted border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-          />
-        </div>
-        <div className="relative">
-          <Filter className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-          <select
-            value={categoryFilter}
-            onChange={(e) => setCategoryFilter(e.target.value)}
-            className="pl-10 pr-8 py-2 bg-muted border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary appearance-none cursor-pointer"
-          >
-            <option value="all">전체 카테고리</option>
-            <option value="idea">아이디어</option>
-            <option value="article">읽을거리</option>
-            <option value="quote">명언</option>
-          </select>
-        </div>
+      {/* Search */}
+      <div className="relative mb-4">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          placeholder="Search..."
+          className="w-full pl-9 pr-4 py-2 bg-background border border-border text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+        />
       </div>
 
-      {/* Clips Table */}
-      <div className="bg-card border border-border rounded-lg overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-border">
-                <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  내용
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden sm:table-cell">
-                  카테고리
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden md:table-cell">
-                  출처
-                </th>
-                <th className="text-left px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider hidden lg:table-cell">
-                  생성일
-                </th>
-                <th className="text-right px-4 py-3 text-xs font-medium text-muted-foreground uppercase tracking-wider">
-                  작업
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-border">
-              {filteredClips.map((clip) => (
-                <tr
-                  key={clip.id}
-                  className="hover:bg-muted/50 transition-colors"
+      {/* Clips List */}
+      <div className="border border-border divide-y divide-border">
+        {filteredClips.map((clip) => (
+          <div
+            key={clip.id}
+            className="flex items-start gap-4 p-4 hover:bg-muted/30 transition-colors"
+          >
+            <div className="flex-1 min-w-0">
+              <p className="text-sm text-foreground line-clamp-2">
+                {clip.content}
+              </p>
+              <div className="flex items-center gap-2 mt-1.5 text-[10px] text-muted-foreground">
+                <span>{new Date(clip.created_at).toLocaleDateString('en-US')}</span>
+                {clip.source && (
+                  <>
+                    <span>&middot;</span>
+                    <span className="truncate max-w-[120px]">{clip.source}</span>
+                  </>
+                )}
+              </div>
+            </div>
+
+            <div className="flex items-center gap-1 shrink-0">
+              <Link
+                href={`/admin/clips/${clip.id}/edit`}
+                className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Pencil className="w-3.5 h-3.5" />
+              </Link>
+              {deleteConfirm === clip.id ? (
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => handleDelete(clip.id)}
+                    className="px-2 py-1 text-[10px] text-foreground bg-muted hover:bg-muted/80"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => setDeleteConfirm(null)}
+                    className="px-2 py-1 text-[10px] text-muted-foreground hover:text-foreground"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setDeleteConfirm(clip.id)}
+                  className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
                 >
-                  <td className="px-4 py-3">
-                    <p className="text-sm text-foreground line-clamp-2">
-                      {clip.content}
-                    </p>
-                    {clip.summary && (
-                      <p className="text-xs text-muted-foreground mt-1 line-clamp-1">
-                        {clip.summary}
-                      </p>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 hidden sm:table-cell">
-                    {clip.category && (
-                      <span
-                        className={`
-                          inline-flex px-2 py-1 text-xs rounded-full
-                          ${clip.category === 'idea' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' : ''}
-                          ${clip.category === 'article' ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400' : ''}
-                          ${clip.category === 'quote' ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400' : ''}
-                        `}
-                      >
-                        {CATEGORY_NAME[clip.category]}
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-4 py-3 hidden md:table-cell">
-                    <p className="text-sm text-muted-foreground truncate max-w-[150px]">
-                      {clip.source || '-'}
-                    </p>
-                  </td>
-                  <td className="px-4 py-3 hidden lg:table-cell">
-                    <p className="text-sm text-muted-foreground">
-                      {new Date(clip.created_at).toLocaleDateString('ko-KR')}
-                    </p>
-                  </td>
-                  <td className="px-4 py-3">
-                    <div className="flex items-center justify-end gap-1">
-                      <Link
-                        href={`/admin/clips/${clip.id}/edit`}
-                        className="p-2 text-muted-foreground hover:text-primary hover:bg-primary/10 rounded-md transition-colors"
-                      >
-                        <Pencil className="w-4 h-4" />
-                      </Link>
-                      {deleteConfirm === clip.id ? (
-                        <div className="flex items-center gap-1">
-                          <button
-                            onClick={() => handleDelete(clip.id)}
-                            className="px-2 py-1 text-xs text-white bg-red-500 hover:bg-red-600 rounded"
-                          >
-                            확인
-                          </button>
-                          <button
-                            onClick={() => setDeleteConfirm(null)}
-                            className="px-2 py-1 text-xs text-muted-foreground hover:bg-muted rounded"
-                          >
-                            취소
-                          </button>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => setDeleteConfirm(clip.id)}
-                          className="p-2 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-md transition-colors"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
-                      )}
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+                  <Trash2 className="w-3.5 h-3.5" />
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
 
         {filteredClips.length === 0 && (
           <div className="text-center py-12">
-            <p className="text-muted-foreground">클립이 없습니다</p>
+            <p className="text-xs text-muted-foreground">No clips found</p>
           </div>
         )}
       </div>

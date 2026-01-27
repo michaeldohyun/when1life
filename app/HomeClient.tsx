@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Clip, CATEGORY_NAME } from '@/lib/supabase';
+import { Clip } from '@/lib/supabase';
 import { ClipGrid } from '@/components/clips/ClipGrid';
 import { ClipList } from '@/components/clips/ClipList';
 import { SearchBar } from '@/components/ui/SearchBar';
@@ -11,14 +11,11 @@ type ViewMode = 'grid' | 'list';
 
 interface HomeClientProps {
   clips: Clip[];
-  category?: string;
 }
 
-export function HomeClient({ clips, category }: HomeClientProps) {
-  const [view, setView] = useState<ViewMode>('grid');
+export function HomeClient({ clips }: HomeClientProps) {
+  const [view, setView] = useState<ViewMode>('list');
   const [searchQuery, setSearchQuery] = useState('');
-
-  const pageTitle = category ? CATEGORY_NAME[category] || '전체' : '전체 클립';
 
   const filteredClips = useMemo(() => {
     if (!searchQuery.trim()) return clips;
@@ -33,31 +30,36 @@ export function HomeClient({ clips, category }: HomeClientProps) {
   }, [clips, searchQuery]);
 
   return (
-    <div className="mx-auto max-w-5xl px-6 py-8">
-      {/* Page Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">
-            {pageTitle}
-          </h1>
-          <p className="text-sm text-muted-foreground mt-1">
-            {filteredClips.length}개의 클립
-            {searchQuery && ` · "${searchQuery}" 검색 결과`}
-          </p>
+    <div className="mx-auto max-w-3xl px-6 py-8">
+      {/* Header */}
+      <div className="flex items-center justify-end gap-3 mb-6">
+        <div className="w-48">
+          <SearchBar onSearch={setSearchQuery} placeholder="검색..." />
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-full sm:w-64">
-            <SearchBar onSearch={setSearchQuery} placeholder="클립 검색..." />
-          </div>
-          <ViewToggle view={view} onViewChange={setView} />
-        </div>
+        <ViewToggle view={view} onViewChange={setView} />
       </div>
+
+      {/* Count */}
+      {searchQuery && (
+        <p className="text-xs text-muted-foreground mb-4">
+          {filteredClips.length}개의 결과
+        </p>
+      )}
 
       {/* Content */}
       {view === 'grid' ? (
         <ClipGrid clips={filteredClips} />
       ) : (
         <ClipList clips={filteredClips} />
+      )}
+
+      {/* Empty state */}
+      {filteredClips.length === 0 && (
+        <div className="text-center py-12">
+          <p className="text-sm text-muted-foreground">
+            {searchQuery ? '검색 결과가 없습니다' : '저장된 클립이 없습니다'}
+          </p>
+        </div>
       )}
     </div>
   );

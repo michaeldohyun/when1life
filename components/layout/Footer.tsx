@@ -4,40 +4,36 @@ import Link from 'next/link';
 import { useAuth } from '@/contexts/AuthContext';
 
 export function Footer() {
-  const { isAdmin, user, signInWithGoogle, signOut } = useAuth();
+  const { user, signInWithGoogle, signOut } = useAuth();
 
   return (
     <footer className="border-t mt-auto">
-      <div className="mx-auto max-w-5xl px-6 py-6">
-        <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground/60">
-          <span>&copy; 2025 when1log</span>
+      <div className="mx-auto max-w-3xl px-6 py-4">
+        <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
+          <span>&copy;2026 when1life</span>
           <span>&middot;</span>
           {user ? (
             <>
-              {isAdmin && (
-                <>
-                  <Link
-                    href="/admin"
-                    className="hover:text-muted-foreground transition-colors"
-                  >
-                    관리자
-                  </Link>
-                  <span>&middot;</span>
-                </>
-              )}
+              <Link
+                href="/admin"
+                className="hover:text-foreground transition-colors"
+              >
+                Admin
+              </Link>
+              <span>&middot;</span>
               <button
                 onClick={() => signOut()}
-                className="hover:text-muted-foreground transition-colors"
+                className="hover:text-foreground transition-colors"
               >
-                로그아웃
+                Logout
               </button>
             </>
           ) : (
             <button
               onClick={() => signInWithGoogle()}
-              className="hover:text-muted-foreground transition-colors"
+              className="hover:text-foreground transition-colors"
             >
-              로그인
+              Admin
             </button>
           )}
         </div>

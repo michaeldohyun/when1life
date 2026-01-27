@@ -6,53 +6,58 @@ export default function SettingsPage() {
   const { user } = useAuth();
 
   return (
-    <div className="max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-foreground mb-6">설정</h1>
-
-      <div className="bg-card border border-border rounded-lg p-6">
-        <h2 className="text-lg font-medium text-foreground mb-4">
-          계정 정보
-        </h2>
-
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm text-muted-foreground mb-1">
-              이메일
-            </label>
-            <p className="text-foreground">{user?.email}</p>
-          </div>
-
-          <div>
-            <label className="block text-sm text-muted-foreground mb-1">
-              계정 ID
-            </label>
-            <p className="text-sm text-muted-foreground font-mono">
-              {user?.id}
-            </p>
-          </div>
-        </div>
+    <div className="max-w-4xl">
+      <div className="mb-6">
+        <h1 className="text-lg font-medium text-foreground">Settings</h1>
+        <p className="text-xs text-muted-foreground mt-0.5">
+          Account and project information
+        </p>
       </div>
 
-      <div className="mt-6 bg-card border border-border rounded-lg p-6">
-        <h2 className="text-lg font-medium text-foreground mb-4">
-          프로젝트 정보
-        </h2>
-
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm text-muted-foreground mb-1">
-              Supabase 프로젝트
-            </label>
-            <p className="text-sm text-muted-foreground">
-              dotsosqsftympgdescvz (when1log)
-            </p>
+      <div className="border border-border divide-y divide-border">
+        {/* Account Info */}
+        <div className="p-4">
+          <h2 className="text-xs font-medium text-foreground mb-3">
+            Account
+          </h2>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-[10px] text-muted-foreground mb-0.5">
+                Email
+              </label>
+              <p className="text-sm text-foreground">{user?.email}</p>
+            </div>
+            <div>
+              <label className="block text-[10px] text-muted-foreground mb-0.5">
+                User ID
+              </label>
+              <p className="text-[10px] text-muted-foreground font-mono truncate">
+                {user?.id}
+              </p>
+            </div>
           </div>
+        </div>
 
-          <div>
-            <label className="block text-sm text-muted-foreground mb-1">
-              스키마
-            </label>
-            <p className="text-sm text-muted-foreground">clipper</p>
+        {/* Project Info */}
+        <div className="p-4">
+          <h2 className="text-xs font-medium text-foreground mb-3">
+            Project
+          </h2>
+          <div className="space-y-3">
+            <div>
+              <label className="block text-[10px] text-muted-foreground mb-0.5">
+                Supabase Project
+              </label>
+              <p className="text-xs text-muted-foreground">
+                dotsosqsftympgdescvz (when1log)
+              </p>
+            </div>
+            <div>
+              <label className="block text-[10px] text-muted-foreground mb-0.5">
+                Schema
+              </label>
+              <p className="text-xs text-muted-foreground">clipper</p>
+            </div>
           </div>
         </div>
       </div>

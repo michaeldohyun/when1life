@@ -14,7 +14,7 @@ export interface Clip {
   content: string;
   image_url: string | null;
   source: string | null;
-  category: 'idea' | 'article' | 'quote' | null;
+  category: 'idea' | 'article' | 'quote' | 'book' | null;
   tags: string[] | null;
   summary: string | null;
   ai_processed: boolean;
@@ -28,7 +28,8 @@ export interface Category {
 }
 
 export const CATEGORY_NAME: Record<string, string> = {
-  idea: '아이디어',
-  article: '읽을거리',
-  quote: '명언',
+  idea: 'Idea',
+  article: 'Article',
+  quote: 'Quote',
+  book: 'Book',
 };

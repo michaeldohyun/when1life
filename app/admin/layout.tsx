@@ -12,14 +12,14 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
     <AdminGuard>
       <div className="min-h-screen bg-background">
         {/* Mobile Header */}
-        <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-background border-b border-border z-30 flex items-center px-4 gap-4">
+        <header className="md:hidden fixed top-0 left-0 right-0 h-12 bg-background border-b border-border z-30 flex items-center px-4 gap-4">
           <button
             onClick={() => setIsMobileMenuOpen(true)}
-            className="p-2 -ml-2 rounded-md text-muted-foreground hover:text-foreground hover:bg-muted"
+            className="p-2 -ml-2 text-muted-foreground hover:text-foreground"
           >
             <Menu className="w-5 h-5" />
           </button>
-          <h1 className="font-semibold text-foreground">관리자</h1>
+          <span className="text-sm font-medium text-foreground">Admin</span>
         </header>
 
         {/* Mobile Sidebar */}
@@ -33,8 +33,8 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         <AdminSidebar />
 
         {/* Main Content */}
-        <main className="md:pl-64 pt-14 md:pt-0">
-          <div className="p-4 md:p-8">{children}</div>
+        <main className="md:pl-48 pt-12 md:pt-0">
+          <div className="p-6">{children}</div>
         </main>
       </div>
     </AdminGuard>

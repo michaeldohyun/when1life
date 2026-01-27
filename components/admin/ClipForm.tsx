@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Clip, clipperDb } from '@/lib/supabase';
-import { Save, ArrowLeft, X } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 interface ClipFormProps {
@@ -48,7 +48,7 @@ export function ClipForm({ clip, isNew }: ClipFormProps) {
       content: formData.content,
       content_type: formData.content_type as 'text' | 'link' | 'image',
       source: formData.source || null,
-      category: (formData.category as 'idea' | 'article' | 'quote') || null,
+      category: (formData.category as 'idea' | 'article' | 'quote' | 'book') || null,
       tags: tags.length > 0 ? tags : null,
       summary: formData.summary || null,
       image_url: formData.image_url || null,
@@ -59,7 +59,7 @@ export function ClipForm({ clip, isNew }: ClipFormProps) {
       if (isNew) {
         const { error } = await clipperDb.from('Clips').insert({
           ...data,
-          chat_id: 'admin', // 관리자가 직접 추가한 클립
+          chat_id: 'admin',
         });
         if (error) throw error;
       } else if (clip) {
@@ -73,145 +73,146 @@ export function ClipForm({ clip, isNew }: ClipFormProps) {
       router.push('/admin/clips');
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : '저장 중 오류가 발생했습니다.');
+      setError(err instanceof Error ? err.message : 'An error occurred while saving.');
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="max-w-2xl mx-auto">
+    <form onSubmit={handleSubmit} className="max-w-4xl">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3">
           <Link
             href="/admin/clips"
-            className="p-2 text-muted-foreground hover:text-foreground hover:bg-muted rounded-md transition-colors"
+            className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
           </Link>
-          <h1 className="text-2xl font-bold text-foreground">
-            {isNew ? '새 클립' : '클립 수정'}
-          </h1>
+          <div>
+            <h1 className="text-lg font-medium text-foreground">
+              {isNew ? 'New Clip' : 'Edit Clip'}
+            </h1>
+          </div>
         </div>
         <button
           type="submit"
           disabled={isSubmitting}
-          className="inline-flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors disabled:opacity-50"
+          className="px-3 py-1.5 text-xs bg-foreground text-background hover:bg-foreground/90 transition-colors disabled:opacity-50"
         >
-          <Save className="w-4 h-4" />
-          {isSubmitting ? '저장 중...' : '저장'}
+          {isSubmitting ? 'Saving...' : 'Save'}
         </button>
       </div>
 
       {error && (
-        <div className="mb-6 p-4 bg-red-50 dark:bg-red-950/20 border border-red-200 dark:border-red-800 rounded-lg flex items-start gap-3">
-          <X className="w-5 h-5 text-red-500 shrink-0 mt-0.5" />
-          <p className="text-sm text-red-600 dark:text-red-400">{error}</p>
+        <div className="mb-4 p-3 border border-border bg-muted/30 text-xs text-foreground">
+          {error}
         </div>
       )}
 
-      <div className="space-y-6 bg-card border border-border rounded-lg p-6">
+      <div className="border border-border divide-y divide-border">
         {/* Content */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            내용 <span className="text-red-500">*</span>
+        <div className="p-4">
+          <label className="block text-xs font-medium text-foreground mb-2">
+            Content <span className="text-muted-foreground">*</span>
           </label>
           <textarea
             required
-            rows={6}
+            rows={5}
             value={formData.content}
             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-            className="w-full px-4 py-3 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary resize-none"
-            placeholder="클립 내용을 입력하세요"
+            className="w-full px-3 py-2 bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground resize-none"
+            placeholder="Enter clip content"
           />
         </div>
 
         {/* Content Type */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            콘텐츠 유형
+        <div className="p-4">
+          <label className="block text-xs font-medium text-foreground mb-2">
+            Type
           </label>
           <select
             value={formData.content_type}
             onChange={(e) => setFormData({ ...formData, content_type: e.target.value as 'text' | 'link' | 'image' })}
-            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2 bg-background border border-border text-sm text-foreground focus:outline-none focus:border-foreground"
           >
-            <option value="text">텍스트</option>
-            <option value="link">링크</option>
-            <option value="image">이미지</option>
+            <option value="text">Text</option>
+            <option value="link">Link</option>
+            <option value="image">Image</option>
           </select>
         </div>
 
         {/* Category */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            카테고리
+        <div className="p-4">
+          <label className="block text-xs font-medium text-foreground mb-2">
+            Category
           </label>
           <select
             value={formData.category}
             onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2 bg-background border border-border text-sm text-foreground focus:outline-none focus:border-foreground"
           >
-            <option value="">선택 안함</option>
-            <option value="idea">아이디어</option>
-            <option value="article">읽을거리</option>
-            <option value="quote">명언</option>
+            <option value="">None</option>
+            <option value="idea">Idea</option>
+            <option value="article">Article</option>
+            <option value="quote">Quote</option>
+            <option value="book">Book</option>
           </select>
         </div>
 
         {/* Source */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            출처
+        <div className="p-4">
+          <label className="block text-xs font-medium text-foreground mb-2">
+            Source
           </label>
           <input
             type="text"
             value={formData.source}
             onChange={(e) => setFormData({ ...formData, source: e.target.value })}
-            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-            placeholder="출처 URL 또는 이름"
+            className="w-full px-3 py-2 bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+            placeholder="Source URL or name"
           />
         </div>
 
         {/* Summary */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            요약
+        <div className="p-4">
+          <label className="block text-xs font-medium text-foreground mb-2">
+            Summary
           </label>
           <input
             type="text"
             value={formData.summary}
             onChange={(e) => setFormData({ ...formData, summary: e.target.value })}
-            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-            placeholder="간략한 요약"
+            className="w-full px-3 py-2 bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+            placeholder="Brief summary"
           />
         </div>
 
         {/* Tags */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            태그
+        <div className="p-4">
+          <label className="block text-xs font-medium text-foreground mb-2">
+            Tags
           </label>
           <input
             type="text"
             value={formData.tags}
             onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
-            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-            placeholder="쉼표로 구분 (예: AI, 스타트업, 기술)"
+            className="w-full px-3 py-2 bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+            placeholder="Comma separated (e.g., AI, startup, tech)"
           />
         </div>
 
         {/* Image URL */}
-        <div>
-          <label className="block text-sm font-medium text-foreground mb-2">
-            이미지 URL
+        <div className="p-4">
+          <label className="block text-xs font-medium text-foreground mb-2">
+            Image URL
           </label>
           <input
             type="url"
             value={formData.image_url}
             onChange={(e) => setFormData({ ...formData, image_url: e.target.value })}
-            className="w-full px-4 py-2 bg-background border border-border rounded-lg text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+            className="w-full px-3 py-2 bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
             placeholder="https://example.com/image.jpg"
           />
         </div>
