@@ -14,7 +14,7 @@ export default async function RunningPage() {
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <Link
-          href="/"
+          href="/workflows"
           className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
         >
           <ArrowLeft className="w-4 h-4" />
@@ -119,7 +119,7 @@ export default async function RunningPage() {
         <p className="text-xs text-muted-foreground">
           Interested in this workflow?{' '}
           <a
-            href="https://t.me/michaeldohyun"
+            href="https://t.me/when1log"
             target="_blank"
             rel="noopener noreferrer"
             className="underline underline-offset-2 hover:text-foreground transition-colors"

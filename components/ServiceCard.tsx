@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, MessageCircle } from 'lucide-react';
+import { ArrowRight } from 'lucide-react';
 
 interface ServiceCardProps {
   title: string;
@@ -7,7 +7,6 @@ interface ServiceCardProps {
   features: string[];
   demoLink: string;
   status: 'active' | 'beta' | 'coming';
-  telegramLink?: string;
 }
 
 export function ServiceCard({
@@ -16,10 +15,9 @@ export function ServiceCard({
   features,
   demoLink,
   status,
-  telegramLink,
 }: ServiceCardProps) {
-  return (
-    <div className="border border-border p-6 hover:border-foreground/30 transition-colors">
+  const cardContent = (
+    <>
       {/* Header */}
       <div className="flex items-start justify-between mb-3">
         <h2 className="text-base font-medium text-foreground">{title}</h2>
@@ -48,35 +46,36 @@ export function ServiceCard({
         ))}
       </ul>
 
-      {/* Actions */}
+      {/* Action indicator */}
       <div className="flex items-center gap-3">
         {status !== 'coming' ? (
-          <Link
-            href={demoLink}
-            className="inline-flex items-center gap-1.5 text-xs text-foreground hover:text-muted-foreground transition-colors"
-          >
+          <span className="inline-flex items-center gap-1.5 text-xs text-foreground">
             View Demo
             <ArrowRight className="w-3 h-3" />
-          </Link>
+          </span>
         ) : (
           <span className="text-xs text-muted-foreground">Coming soon</span>
         )}
-
-        {telegramLink && (
-          <>
-            <span className="text-muted-foreground">&middot;</span>
-            <a
-              href={telegramLink}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <MessageCircle className="w-3 h-3" />
-              Contact
-            </a>
-          </>
-        )}
       </div>
-    </div>
+    </>
+  );
+
+  const baseClasses = 'block border border-border p-6 transition-colors';
+
+  if (status === 'coming') {
+    return (
+      <div className={`${baseClasses} opacity-60`}>
+        {cardContent}
+      </div>
+    );
+  }
+
+  return (
+    <Link
+      href={demoLink}
+      className={`${baseClasses} hover:border-foreground/30 cursor-pointer`}
+    >
+      {cardContent}
+    </Link>
   );
 }

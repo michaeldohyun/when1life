@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useMemo } from 'react';
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import { Clip } from '@/lib/supabase';
 import { ClipGrid } from '@/components/clips/ClipGrid';
 import { ClipList } from '@/components/clips/ClipList';
@@ -32,8 +34,14 @@ export function ClipsClient({ clips }: ClipsClientProps) {
   return (
     <div className="mx-auto max-w-3xl px-6 py-8">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div>
+      <div className="flex items-center gap-3 mb-6">
+        <Link
+          href="/workflows"
+          className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </Link>
+        <div className="flex-1">
           <h1 className="text-lg font-medium text-foreground">Clips</h1>
           <p className="text-xs text-muted-foreground mt-0.5">
             Content curation powered by AI

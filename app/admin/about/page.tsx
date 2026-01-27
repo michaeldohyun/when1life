@@ -2,13 +2,21 @@
 
 import { useState, useEffect } from 'react';
 import { clipperDb } from '@/lib/supabase';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
 import Link from 'next/link';
+
+interface TimelineItem {
+  year: string;
+  title: string;
+  description: string;
+}
 
 interface AboutPage {
   id: string;
   title: string;
   content: string;
+  profile_image_url: string | null;
+  timeline: TimelineItem[];
   updated_at: string;
 }
 
@@ -21,6 +29,8 @@ export default function AdminAboutPage() {
   const [formData, setFormData] = useState({
     title: '',
     content: '',
+    profile_image_url: '',
+    timeline: [] as TimelineItem[],
   });
 
   useEffect(() => {
@@ -35,10 +45,13 @@ export default function AdminAboutPage() {
       .single();
 
     if (!error && data) {
-      setAbout(data as AboutPage);
+      const aboutData = data as AboutPage;
+      setAbout(aboutData);
       setFormData({
-        title: data.title,
-        content: data.content,
+        title: aboutData.title,
+        content: aboutData.content,
+        profile_image_url: aboutData.profile_image_url || '',
+        timeline: aboutData.timeline || [],
       });
     }
     setIsLoading(false);
@@ -55,6 +68,8 @@ export default function AdminAboutPage() {
       .update({
         title: formData.title,
         content: formData.content,
+        profile_image_url: formData.profile_image_url || null,
+        timeline: formData.timeline,
         updated_at: new Date().toISOString(),
       })
       .eq('id', about.id);
@@ -66,6 +81,26 @@ export default function AdminAboutPage() {
     }
 
     setIsSaving(false);
+  };
+
+  const addTimelineItem = () => {
+    setFormData({
+      ...formData,
+      timeline: [...formData.timeline, { year: '', title: '', description: '' }],
+    });
+  };
+
+  const removeTimelineItem = (index: number) => {
+    setFormData({
+      ...formData,
+      timeline: formData.timeline.filter((_, i) => i !== index),
+    });
+  };
+
+  const updateTimelineItem = (index: number, field: keyof TimelineItem, value: string) => {
+    const newTimeline = [...formData.timeline];
+    newTimeline[index] = { ...newTimeline[index], [field]: value };
+    setFormData({ ...formData, timeline: newTimeline });
   };
 
   if (isLoading) {
@@ -125,6 +160,29 @@ export default function AdminAboutPage() {
       )}
 
       <div className="border border-border divide-y divide-border">
+        {/* Profile Image URL */}
+        <div className="p-4">
+          <label className="block text-xs font-medium text-foreground mb-2">
+            Profile Image URL
+          </label>
+          <input
+            type="url"
+            value={formData.profile_image_url}
+            onChange={(e) => setFormData({ ...formData, profile_image_url: e.target.value })}
+            className="w-full px-3 py-2 bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+            placeholder="https://example.com/image.jpg"
+          />
+          {formData.profile_image_url && (
+            <div className="mt-3">
+              <img
+                src={formData.profile_image_url}
+                alt="Profile preview"
+                className="w-20 h-20 object-cover rounded-full border border-border"
+              />
+            </div>
+          )}
+        </div>
+
         {/* Title */}
         <div className="p-4">
           <label className="block text-xs font-medium text-foreground mb-2">
@@ -142,10 +200,10 @@ export default function AdminAboutPage() {
         {/* Content */}
         <div className="p-4">
           <label className="block text-xs font-medium text-foreground mb-2">
-            Content
+            Bio
           </label>
           <textarea
-            rows={15}
+            rows={8}
             value={formData.content}
             onChange={(e) => setFormData({ ...formData, content: e.target.value })}
             className="w-full px-3 py-2 bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground resize-none"
@@ -154,6 +212,64 @@ export default function AdminAboutPage() {
           <p className="mt-2 text-[10px] text-muted-foreground">
             Use line breaks to separate paragraphs. URLs will be automatically linked.
           </p>
+        </div>
+
+        {/* Timeline */}
+        <div className="p-4">
+          <div className="flex items-center justify-between mb-4">
+            <label className="block text-xs font-medium text-foreground">
+              Timeline
+            </label>
+            <button
+              onClick={addTimelineItem}
+              className="flex items-center gap-1 px-2 py-1 text-xs text-muted-foreground hover:text-foreground border border-border hover:border-foreground transition-colors"
+            >
+              <Plus className="w-3 h-3" />
+              Add Item
+            </button>
+          </div>
+
+          {formData.timeline.length === 0 ? (
+            <p className="text-xs text-muted-foreground">No timeline items yet.</p>
+          ) : (
+            <div className="space-y-4">
+              {formData.timeline.map((item, index) => (
+                <div key={index} className="border border-border p-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex-1 grid grid-cols-3 gap-3">
+                      <input
+                        type="text"
+                        value={item.year}
+                        onChange={(e) => updateTimelineItem(index, 'year', e.target.value)}
+                        className="px-2 py-1.5 bg-background border border-border text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+                        placeholder="Year (e.g., 2024)"
+                      />
+                      <input
+                        type="text"
+                        value={item.title}
+                        onChange={(e) => updateTimelineItem(index, 'title', e.target.value)}
+                        className="col-span-2 px-2 py-1.5 bg-background border border-border text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+                        placeholder="Title"
+                      />
+                    </div>
+                    <button
+                      onClick={() => removeTimelineItem(index)}
+                      className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
+                  <input
+                    type="text"
+                    value={item.description}
+                    onChange={(e) => updateTimelineItem(index, 'description', e.target.value)}
+                    className="mt-2 w-full px-2 py-1.5 bg-background border border-border text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+                    placeholder="Description (optional)"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

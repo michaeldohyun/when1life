@@ -10,7 +10,7 @@ export function Footer() {
     <footer className="border-t mt-auto">
       <div className="mx-auto max-w-3xl px-6 py-4">
         <div className="flex items-center justify-center gap-3 text-xs text-muted-foreground">
-          <span>&copy;2026 when1life</span>
+          <span>&copy;2026 when1log</span>
           <span>&middot;</span>
           {user ? (
             <>
