@@ -9,11 +9,11 @@ import { ViewToggle } from '@/components/ui/ViewToggle';
 
 type ViewMode = 'grid' | 'list';
 
-interface HomeClientProps {
+interface ClipsClientProps {
   clips: Clip[];
 }
 
-export function HomeClient({ clips }: HomeClientProps) {
+export function ClipsClient({ clips }: ClipsClientProps) {
   const [view, setView] = useState<ViewMode>('list');
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -32,17 +32,25 @@ export function HomeClient({ clips }: HomeClientProps) {
   return (
     <div className="mx-auto max-w-3xl px-6 py-8">
       {/* Header */}
-      <div className="flex items-center justify-end gap-3 mb-6">
-        <div className="w-48">
-          <SearchBar onSearch={setSearchQuery} placeholder="검색..." />
+      <div className="flex items-center justify-between mb-6">
+        <div>
+          <h1 className="text-lg font-medium text-foreground">Clips</h1>
+          <p className="text-xs text-muted-foreground mt-0.5">
+            Content curation powered by AI
+          </p>
         </div>
-        <ViewToggle view={view} onViewChange={setView} />
+        <div className="flex items-center gap-3">
+          <div className="w-48">
+            <SearchBar onSearch={setSearchQuery} placeholder="Search..." />
+          </div>
+          <ViewToggle view={view} onViewChange={setView} />
+        </div>
       </div>
 
       {/* Count */}
       {searchQuery && (
         <p className="text-xs text-muted-foreground mb-4">
-          {filteredClips.length}개의 결과
+          {filteredClips.length} results
         </p>
       )}
 
@@ -57,7 +65,7 @@ export function HomeClient({ clips }: HomeClientProps) {
       {filteredClips.length === 0 && (
         <div className="text-center py-12">
           <p className="text-sm text-muted-foreground">
-            {searchQuery ? '검색 결과가 없습니다' : '저장된 클립이 없습니다'}
+            {searchQuery ? 'No results found' : 'No clips saved yet'}
           </p>
         </div>
       )}
