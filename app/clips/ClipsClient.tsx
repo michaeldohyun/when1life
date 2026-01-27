@@ -34,7 +34,7 @@ export function ClipsClient({ clips }: ClipsClientProps) {
   return (
     <div className="mx-auto max-w-3xl px-6 py-8">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-4">
         <Link
           href="/workflows"
           className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
@@ -47,12 +47,14 @@ export function ClipsClient({ clips }: ClipsClientProps) {
             Content curation powered by AI
           </p>
         </div>
-        <div className="flex items-center gap-3">
-          <div className="w-48">
-            <SearchBar onSearch={setSearchQuery} placeholder="Search..." />
-          </div>
-          <ViewToggle view={view} onViewChange={setView} />
+      </div>
+
+      {/* Search & View Toggle */}
+      <div className="flex items-center gap-3 mb-6">
+        <div className="flex-1">
+          <SearchBar onSearch={setSearchQuery} placeholder="Search..." />
         </div>
+        <ViewToggle view={view} onViewChange={setView} />
       </div>
 
       {/* Count */}

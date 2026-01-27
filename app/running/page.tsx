@@ -1,11 +1,12 @@
-import { getRecentActivities, getWeeklyStats, getCurrentGoal } from '@/lib/running';
-import { ArrowLeft, Target, TrendingUp, Clock, Activity } from 'lucide-react';
+import { getRecentActivities, getPeriodStats, getCurrentGoal } from '@/lib/running';
+import { ArrowLeft, Target } from 'lucide-react';
 import Link from 'next/link';
+import { RunningClient } from './RunningClient';
 
 export default async function RunningPage() {
-  const [activities, weeklyStats, goal] = await Promise.all([
-    getRecentActivities(5),
-    getWeeklyStats(),
+  const [activities, stats, goal] = await Promise.all([
+    getRecentActivities(10, 7),
+    getPeriodStats(7),
     getCurrentGoal(),
   ]);
 
@@ -38,81 +39,8 @@ export default async function RunningPage() {
         </div>
       )}
 
-      {/* Weekly Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-        <div className="border border-border p-4">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-            <TrendingUp className="w-3.5 h-3.5" />
-            Distance
-          </div>
-          <p className="text-lg font-medium text-foreground">
-            {weeklyStats.totalDistance} <span className="text-xs text-muted-foreground">km</span>
-          </p>
-        </div>
-        <div className="border border-border p-4">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-            <Clock className="w-3.5 h-3.5" />
-            Duration
-          </div>
-          <p className="text-lg font-medium text-foreground">
-            {weeklyStats.totalDuration} <span className="text-xs text-muted-foreground">min</span>
-          </p>
-        </div>
-        <div className="border border-border p-4">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-            <Activity className="w-3.5 h-3.5" />
-            Avg Pace
-          </div>
-          <p className="text-lg font-medium text-foreground">
-            {weeklyStats.avgPace} <span className="text-xs text-muted-foreground">/km</span>
-          </p>
-        </div>
-        <div className="border border-border p-4">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-            Runs
-          </div>
-          <p className="text-lg font-medium text-foreground">
-            {weeklyStats.runCount} <span className="text-xs text-muted-foreground">this week</span>
-          </p>
-        </div>
-      </div>
-
-      {/* Recent Activities */}
-      <div>
-        <h2 className="text-sm font-medium text-foreground mb-4">Recent Activities</h2>
-        {activities.length > 0 ? (
-          <div className="border border-border divide-y divide-border">
-            {activities.map((activity) => (
-              <div key={activity.id} className="p-4 flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-foreground">
-                    {activity.name || `${activity.distance_km?.toFixed(1)} km run`}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    {new Date(activity.date).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                    })}
-                    {activity.avg_hr && ` · ${activity.avg_hr} bpm`}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-foreground">
-                    {activity.distance_km?.toFixed(1)} km
-                  </p>
-                  <p className="text-xs text-muted-foreground">
-                    {activity.avg_pace || '-'}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : (
-          <div className="border border-border p-8 text-center">
-            <p className="text-sm text-muted-foreground">No activities yet</p>
-          </div>
-        )}
-      </div>
+      {/* Client Component with Filter */}
+      <RunningClient initialStats={stats} initialActivities={activities} />
 
       {/* Contact */}
       <div className="mt-8 pt-8 border-t border-border">

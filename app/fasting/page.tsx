@@ -1,20 +1,39 @@
 import {
   getRecentSessions,
+  getPeriodStats,
   getLatestBodyComposition,
   getCurrentGoal,
   getCurrentTheory,
-  formatDuration,
+  getWeightWithFastingCorrelation,
+  calculateGoalProgress,
 } from '@/lib/fasting';
-import { ArrowLeft, Target, Scale, Timer, Clock } from 'lucide-react';
+import { ArrowLeft, Target, Scale, Clock, TrendingDown } from 'lucide-react';
 import Link from 'next/link';
+import { FastingClient } from './FastingClient';
+import { WeightChart } from '@/components/fasting/WeightChart';
 
 export default async function FastingPage() {
-  const [sessions, bodyComp, goal, theory] = await Promise.all([
-    getRecentSessions(5),
+  const [sessions, stats, bodyComp, goal, theory, weightHistory] = await Promise.all([
+    getRecentSessions(10, 7),
+    getPeriodStats(7),
     getLatestBodyComposition(),
     getCurrentGoal(),
     getCurrentTheory(),
+    getWeightWithFastingCorrelation(90),
   ]);
+
+  // 목표 진행률 계산
+  const startWeight = goal?.current_weight_kg || (weightHistory.length > 0 ? weightHistory[0].weight_kg : null);
+  const currentWeight = bodyComp?.weight_kg || null;
+  const targetWeight = goal?.target_weight_kg || null;
+
+  const progress =
+    currentWeight && targetWeight && startWeight
+      ? calculateGoalProgress(currentWeight, targetWeight, startWeight)
+      : null;
+
+  const remainingKg =
+    currentWeight && targetWeight ? Math.max(0, currentWeight - targetWeight) : null;
 
   return (
     <div className="mx-auto max-w-3xl px-6 py-8">
@@ -47,8 +66,8 @@ export default async function FastingPage() {
         </div>
       )}
 
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      {/* Body Composition & Goal */}
+      <div className="grid grid-cols-2 md:grid-cols-3 gap-4 mb-6">
         {/* Current Weight */}
         <div className="border border-border p-4">
           <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
@@ -59,6 +78,11 @@ export default async function FastingPage() {
             {bodyComp?.weight_kg?.toFixed(1) || '-'}{' '}
             <span className="text-xs text-muted-foreground">kg</span>
           </p>
+          {bodyComp?.measured_at && (
+            <p className="text-[10px] text-muted-foreground mt-1">
+              {new Date(bodyComp.measured_at).toLocaleDateString('ko-KR')}
+            </p>
+          )}
         </div>
 
         {/* Body Fat */}
@@ -85,62 +109,50 @@ export default async function FastingPage() {
             </p>
           </div>
         )}
+      </div>
 
-        {/* Total Sessions */}
-        <div className="border border-border p-4">
-          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-1">
-            <Timer className="w-3.5 h-3.5" />
-            Sessions
+      {/* Goal Progress */}
+      {remainingKg !== null && targetWeight && progress !== null && (
+        <div className="border border-border p-4 mb-6">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+              <TrendingDown className="w-3.5 h-3.5" />
+              Goal Progress
+            </div>
+            <span className="text-xs text-muted-foreground">
+              {remainingKg > 0 ? `${remainingKg.toFixed(1)}kg remaining` : 'Goal reached!'}
+            </span>
           </div>
-          <p className="text-lg font-medium text-foreground">
-            {sessions.length}{' '}
-            <span className="text-xs text-muted-foreground">recent</span>
-          </p>
+
+          {/* Progress bar */}
+          <div className="h-2 bg-muted rounded-full overflow-hidden">
+            <div
+              className="h-full bg-foreground transition-all duration-500"
+              style={{ width: `${progress}%` }}
+            />
+          </div>
+
+          <div className="flex justify-between mt-2 text-[10px] text-muted-foreground">
+            <span>{startWeight?.toFixed(1)}kg</span>
+            <span className="font-medium text-foreground">{progress}%</span>
+            <span>{targetWeight}kg</span>
+          </div>
         </div>
-      </div>
+      )}
 
-      {/* Recent Sessions */}
-      <div>
-        <h2 className="text-sm font-medium text-foreground mb-4">Recent Fasting Sessions</h2>
-        {sessions.length > 0 ? (
-          <div className="border border-border divide-y divide-border">
-            {sessions.map((session) => (
-              <div key={session.id} className="p-4 flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-foreground">
-                    {new Date(session.started_at).toLocaleDateString('en-US', {
-                      month: 'short',
-                      day: 'numeric',
-                      year: 'numeric',
-                    })}
-                  </p>
-                  <p className="text-xs text-muted-foreground mt-0.5">
-                    Started{' '}
-                    {new Date(session.started_at).toLocaleTimeString('en-US', {
-                      hour: '2-digit',
-                      minute: '2-digit',
-                    })}
-                  </p>
-                </div>
-                <div className="text-right">
-                  <p className="text-sm text-foreground">
-                    {session.duration_minutes
-                      ? formatDuration(session.duration_minutes)
-                      : 'In progress'}
-                  </p>
-                  {session.goal_reached && (
-                    <p className="text-xs text-muted-foreground">Goal reached</p>
-                  )}
-                </div>
-              </div>
-            ))}
+      {/* Weight Chart with Fasting Correlation */}
+      {weightHistory.length > 0 && (
+        <div className="border border-border p-4 mb-6">
+          <div className="flex items-center gap-2 text-xs text-muted-foreground mb-4">
+            <Scale className="w-3.5 h-3.5" />
+            Weight Trend (90 days)
           </div>
-        ) : (
-          <div className="border border-border p-8 text-center">
-            <p className="text-sm text-muted-foreground">No fasting sessions yet</p>
-          </div>
-        )}
-      </div>
+          <WeightChart data={weightHistory} targetWeight={targetWeight || undefined} />
+        </div>
+      )}
+
+      {/* Client Component with Filter */}
+      <FastingClient initialStats={stats} initialSessions={sessions} />
 
       {/* Contact */}
       <div className="mt-8 pt-8 border-t border-border">

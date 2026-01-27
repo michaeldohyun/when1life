@@ -1,8 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { clipperDb } from '@/lib/supabase';
-import { ArrowLeft, Plus, Trash2 } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Upload, Loader2 } from 'lucide-react';
 import Link from 'next/link';
 
 interface TimelineItem {
@@ -24,7 +24,9 @@ export default function AdminAboutPage() {
   const [about, setAbout] = useState<AboutPage | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUploading, setIsUploading] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -103,6 +105,42 @@ export default function AdminAboutPage() {
     setFormData({ ...formData, timeline: newTimeline });
   };
 
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setIsUploading(true);
+    setMessage(null);
+
+    try {
+      const uploadFormData = new FormData();
+      uploadFormData.append('file', file);
+      uploadFormData.append('bucket', 'images');
+      uploadFormData.append('folder', 'profile');
+
+      const response = await fetch('/api/upload', {
+        method: 'POST',
+        body: uploadFormData,
+      });
+
+      const data = await response.json();
+
+      if (data.success) {
+        setFormData({ ...formData, profile_image_url: data.url });
+        setMessage({ type: 'success', text: 'Image uploaded successfully.' });
+      } else {
+        setMessage({ type: 'error', text: data.error || 'Upload failed.' });
+      }
+    } catch {
+      setMessage({ type: 'error', text: 'Upload failed.' });
+    } finally {
+      setIsUploading(false);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
@@ -160,27 +198,61 @@ export default function AdminAboutPage() {
       )}
 
       <div className="border border-border divide-y divide-border">
-        {/* Profile Image URL */}
+        {/* Profile Image */}
         <div className="p-4">
           <label className="block text-xs font-medium text-foreground mb-2">
-            Profile Image URL
+            Profile Image
           </label>
-          <input
-            type="url"
-            value={formData.profile_image_url}
-            onChange={(e) => setFormData({ ...formData, profile_image_url: e.target.value })}
-            className="w-full px-3 py-2 bg-background border border-border text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
-            placeholder="https://example.com/image.jpg"
-          />
-          {formData.profile_image_url && (
-            <div className="mt-3">
-              <img
-                src={formData.profile_image_url}
-                alt="Profile preview"
-                className="w-20 h-20 object-cover rounded-full border border-border"
+          <div className="flex items-start gap-4">
+            {/* Preview */}
+            <div className="flex-shrink-0">
+              {formData.profile_image_url ? (
+                <img
+                  src={formData.profile_image_url}
+                  alt="Profile preview"
+                  className="w-20 h-20 object-cover rounded-full border border-border"
+                />
+              ) : (
+                <div className="w-20 h-20 rounded-full border border-dashed border-border flex items-center justify-center">
+                  <span className="text-[10px] text-muted-foreground">No image</span>
+                </div>
+              )}
+            </div>
+            {/* Upload Controls */}
+            <div className="flex-1 space-y-2">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/gif,image/webp"
+                onChange={handleImageUpload}
+                className="hidden"
+              />
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading}
+                className="flex items-center gap-1.5 px-3 py-1.5 text-xs border border-border text-foreground hover:bg-muted transition-colors disabled:opacity-50"
+              >
+                {isUploading ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : (
+                  <Upload className="w-3.5 h-3.5" />
+                )}
+                {isUploading ? 'Uploading...' : 'Upload Image'}
+              </button>
+              <p className="text-[10px] text-muted-foreground">
+                JPEG, PNG, GIF, WebP. Max 5MB.
+              </p>
+              {/* URL Input (fallback) */}
+              <input
+                type="url"
+                value={formData.profile_image_url}
+                onChange={(e) => setFormData({ ...formData, profile_image_url: e.target.value })}
+                className="w-full px-2 py-1.5 bg-background border border-border text-xs text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-foreground"
+                placeholder="Or paste image URL directly"
               />
             </div>
-          )}
+          </div>
         </div>
 
         {/* Title */}

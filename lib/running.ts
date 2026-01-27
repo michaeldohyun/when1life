@@ -17,20 +17,48 @@ export interface UserGoal {
   is_active: boolean;
 }
 
-export interface WeeklyStats {
+export interface PeriodStats {
   totalDistance: number;
   totalDuration: number;
   avgPace: string;
   runCount: number;
 }
 
-// 최근 러닝 활동 가져오기
-export async function getRecentActivities(limit: number = 5): Promise<RunningLog[]> {
-  const { data, error } = await supabase
+// 기간 계산 헬퍼
+function getDateFromPeriod(days: number | null): string | null {
+  if (days === null) return null;
+  const date = new Date();
+  date.setDate(date.getDate() - days);
+  return date.toISOString().split('T')[0];
+}
+
+// 최근 러닝 활동 가져오기 (기간 필터 + 페이지네이션)
+export async function getRecentActivities(
+  limit: number = 10,
+  periodDays: number | null = null,
+  offset: number = 0,
+  dateRange?: { start: string; end: string }
+): Promise<RunningLog[]> {
+  let query = supabase
     .from('RunningLogs')
     .select('id, date, name, distance_km, duration_min, avg_pace, avg_hr, training_load')
-    .order('date', { ascending: false })
-    .limit(limit);
+    .order('date', { ascending: false });
+
+  // 커스텀 날짜 범위가 있으면 우선 적용
+  if (dateRange) {
+    query = query.gte('date', dateRange.start).lte('date', dateRange.end);
+  } else {
+    const startDate = getDateFromPeriod(periodDays);
+    if (startDate) {
+      query = query.gte('date', startDate);
+    }
+  }
+
+  if (limit > 0) {
+    query = query.range(offset, offset + limit - 1);
+  }
+
+  const { data, error } = await query;
 
   if (error) {
     console.error('Error fetching running logs:', error);
@@ -40,18 +68,29 @@ export async function getRecentActivities(limit: number = 5): Promise<RunningLog
   return data || [];
 }
 
-// 주간 통계 계산
-export async function getWeeklyStats(): Promise<WeeklyStats> {
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-  const { data, error } = await supabase
+// 기간별 통계 계산
+export async function getPeriodStats(
+  periodDays: number | null = 7,
+  dateRange?: { start: string; end: string }
+): Promise<PeriodStats> {
+  let query = supabase
     .from('RunningLogs')
-    .select('distance_km, duration_min')
-    .gte('date', oneWeekAgo.toISOString().split('T')[0]);
+    .select('distance_km, duration_min');
+
+  // 커스텀 날짜 범위가 있으면 우선 적용
+  if (dateRange) {
+    query = query.gte('date', dateRange.start).lte('date', dateRange.end);
+  } else {
+    const startDate = getDateFromPeriod(periodDays);
+    if (startDate) {
+      query = query.gte('date', startDate);
+    }
+  }
+
+  const { data, error } = await query;
 
   if (error || !data) {
-    console.error('Error fetching weekly stats:', error);
+    console.error('Error fetching period stats:', error);
     return {
       totalDistance: 0,
       totalDuration: 0,
@@ -77,6 +116,11 @@ export async function getWeeklyStats(): Promise<WeeklyStats> {
     avgPace,
     runCount: data.length,
   };
+}
+
+// 주간 통계 (하위 호환성)
+export async function getWeeklyStats(): Promise<PeriodStats> {
+  return getPeriodStats(7);
 }
 
 // 현재 목표 가져오기
