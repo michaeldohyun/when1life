@@ -1,3 +1,5 @@
+import Link from 'next/link';
+import { ArrowLeft } from 'lucide-react';
 import { ServiceCard } from '@/components/ServiceCard';
 
 const services = [
@@ -39,14 +41,22 @@ const services = [
 export default function WorkflowsPage() {
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
-      {/* Hero */}
-      <div className="mb-12">
-        <h1 className="text-xl font-medium text-foreground mb-2">
-          AI-Powered Personal Workflows
-        </h1>
-        <p className="text-sm text-muted-foreground">
-          Experimental automation tools built with Telegram, n8n, and Supabase
-        </p>
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-12">
+        <Link
+          href="/"
+          className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+        >
+          <ArrowLeft className="w-4 h-4" />
+        </Link>
+        <div>
+          <h1 className="text-xl font-medium text-foreground">
+            AI-Powered Personal Workflows
+          </h1>
+          <p className="text-sm text-muted-foreground mt-0.5">
+            Experimental automation tools built with Telegram, n8n, and Supabase
+          </p>
+        </div>
       </div>
 
       {/* Services */}
