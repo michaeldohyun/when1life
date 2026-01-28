@@ -16,8 +16,25 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "When1.Life - 클립퍼",
-  description: "영감을 주는 글귀, 아이디어, 읽을거리를 모아보세요",
+  metadataBase: new URL('https://when1.life'),
+  title: {
+    default: 'when1life',
+    template: '%s | when1life',
+  },
+  description: 'AI-powered personal workflows - Clipper, Running Coach, Fasting Coach',
+  openGraph: {
+    title: 'when1life',
+    description: 'AI-powered personal workflows',
+    url: 'https://when1.life',
+    siteName: 'when1life',
+    locale: 'ko_KR',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'when1life',
+    description: 'AI-powered personal workflows',
+  },
 };
 
 export default function RootLayout({
