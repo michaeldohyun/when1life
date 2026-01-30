@@ -13,7 +13,7 @@ export interface BodyComposition {
   measured_at: string;
   weight_kg: number;
   body_fat_pct: number | null;
-  skeletal_muscle_kg: number | null;
+  muscle_mass_kg: number | null;
 }
 
 export interface FastingGoal {
@@ -138,7 +138,7 @@ export async function getPeriodStats(
 export async function getLatestBodyComposition(): Promise<BodyComposition | null> {
   const { data, error } = await supabase
     .from('BodyCompositionLogs')
-    .select('id, measured_at, weight_kg, body_fat_pct, skeletal_muscle_kg')
+    .select('id, measured_at, weight_kg, body_fat_pct, muscle_mass_kg')
     .order('measured_at', { ascending: false })
     .limit(1)
     .maybeSingle();

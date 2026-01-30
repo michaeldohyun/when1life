@@ -1,6 +1,8 @@
 import { clipperDb, Clip } from '@/lib/supabase';
 import { ClipsClient } from './ClipsClient';
 
+export const dynamic = 'force-dynamic';
+
 async function getClips(): Promise<Clip[]> {
   const { data, error } = await clipperDb
     .from('Clips')

@@ -1,5 +1,7 @@
 import { clipperDb, Clip } from '@/lib/supabase';
 import { notFound } from 'next/navigation';
+
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { ArrowLeft, ExternalLink } from 'lucide-react';
 import { LinkifiedContent } from '@/components/ui/LinkifiedContent';
@@ -49,7 +51,7 @@ export default async function ClipDetailPage({ params }: ClipDetailPageProps) {
     <div className="mx-auto max-w-3xl px-6 py-8">
       {/* Back Button */}
       <Link
-        href="/"
+        href="/clips"
         className="inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-8"
       >
         <ArrowLeft className="w-4 h-4" />

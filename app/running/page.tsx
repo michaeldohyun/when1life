@@ -1,5 +1,7 @@
 import { getRecentActivities, getPeriodStats, getCurrentGoal } from '@/lib/running';
 import { ArrowLeft, Target } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { RunningClient } from './RunningClient';
 

@@ -8,6 +8,8 @@ import {
   calculateGoalProgress,
 } from '@/lib/fasting';
 import { ArrowLeft, Target, Scale, Clock, TrendingDown } from 'lucide-react';
+
+export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { FastingClient } from './FastingClient';
 import { WeightChart } from '@/components/fasting/WeightChart';
