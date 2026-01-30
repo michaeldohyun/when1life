@@ -1,9 +1,19 @@
 import { getRecentActivities, getPeriodStats, getCurrentGoal } from '@/lib/running';
-import { ArrowLeft, Target } from 'lucide-react';
+import { ArrowLeft, Target, Sparkles } from 'lucide-react';
 
 export const dynamic = 'force-dynamic';
 import Link from 'next/link';
 import { RunningClient } from './RunningClient';
+
+function getDefaultYearMonth(): string {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = now.getMonth();
+  if (month === 0) {
+    return `${year - 1}-12`;
+  }
+  return `${year}-${month.toString().padStart(2, '0')}`;
+}
 
 export default async function RunningPage() {
   const [activities, stats, goal] = await Promise.all([
@@ -29,6 +39,20 @@ export default async function RunningPage() {
           </p>
         </div>
       </div>
+
+      {/* Monthly Word Cloud */}
+      <Link
+        href={`/running/monthly/wordcloud?month=${getDefaultYearMonth()}`}
+        className="block border border-border hover:border-neutral-600 p-4 mb-6 transition-colors group"
+      >
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-neutral-500 group-hover:text-neutral-300 transition-colors" />
+            <span className="text-sm text-neutral-300">월간 러닝 정산</span>
+          </div>
+          <span className="text-xs text-neutral-500">→</span>
+        </div>
+      </Link>
 
       {/* Current Goal */}
       {goal && (
