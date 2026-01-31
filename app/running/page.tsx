@@ -42,7 +42,7 @@ export default async function RunningPage() {
 
       {/* Monthly Word Cloud */}
       <Link
-        href={`/running/monthly/wordcloud?month=${getDefaultYearMonth()}`}
+        href={`/running/monthly?month=${getDefaultYearMonth()}`}
         className="block border border-border hover:border-neutral-600 p-4 mb-6 transition-colors group"
       >
         <div className="flex items-center justify-between">

@@ -88,66 +88,66 @@ export default function WordCloudClient({
   const backgroundStyle = getBackgroundStyle(settings.backgroundImage, settings.colors.background);
 
   return (
-    <div className="min-h-screen" style={backgroundStyle}>
-      {/* 헤더 */}
-      <div className="sticky top-0 z-10 bg-neutral-950/80 backdrop-blur-sm border-b border-neutral-800">
-        <div className="max-w-4xl mx-auto px-4 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <Link
-              href="/running/monthly"
-              className="p-1.5 text-neutral-400 hover:text-neutral-200 transition-colors"
-            >
-              <ArrowLeft className="w-4 h-4" />
-            </Link>
-            <div>
-              <h1 className="text-sm font-medium text-neutral-200">워드 콜라주</h1>
-              <p className="text-xs text-neutral-500">{yearStr}년 {monthName}</p>
-            </div>
+    <div className="mx-auto max-w-3xl px-6 py-8">
+      {/* Header - /running 스타일 */}
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <Link
+            href="/running"
+            className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+          </Link>
+          <div>
+            <h1 className="text-lg font-medium text-foreground">월간 러닝 정산</h1>
+            <p className="text-xs text-muted-foreground mt-0.5">{yearStr}년 {monthName}</p>
           </div>
-          <div className="flex items-center gap-1">
-            {/* 월 네비게이션 */}
-            <Link
-              href={`/running/monthly/wordcloud?month=${previousMonth}`}
-              className="p-2 text-neutral-400 hover:text-neutral-200 transition-colors"
-              title="이전 달"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </Link>
-            <Link
-              href={`/running/monthly/wordcloud?month=${nextMonth}`}
-              className="p-2 text-neutral-400 hover:text-neutral-200 transition-colors"
-              title="다음 달"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </Link>
-            <div className="w-px h-4 bg-neutral-700 mx-1" />
-            <WordCloudCustomizer
-              settings={settings}
-              onSettingsChange={setSettings}
-            />
-            <WordCloudActions
-              wordCloudRef={wordCloudRef}
-              title={`${yearStr}년 ${monthName} 러닝 정산`}
-              yearMonth={yearMonth}
-            />
-          </div>
+        </div>
+        <div className="flex items-center gap-1">
+          {/* 월 네비게이션 */}
+          <Link
+            href={`/running/monthly?month=${previousMonth}`}
+            className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+            title="이전 달"
+          >
+            <ChevronLeft className="w-4 h-4" />
+          </Link>
+          <Link
+            href={`/running/monthly?month=${nextMonth}`}
+            className="p-2 text-muted-foreground hover:text-foreground transition-colors"
+            title="다음 달"
+          >
+            <ChevronRight className="w-4 h-4" />
+          </Link>
         </div>
       </div>
 
       {/* 워드 클라우드 */}
-      <div className="flex items-center justify-center p-4 md:p-8">
-        <div className="w-full max-w-3xl aspect-square rounded-2xl overflow-hidden" style={backgroundStyle}>
-          <MonthlyWordCloud
-            ref={wordCloudRef}
-            words={customizedWords}
-            backgroundColor={settings.colors.background}
-            backgroundImage={settings.backgroundImage}
-            fontFamily={settings.font.family}
-            spiral={settings.layout.spiral}
-            rotation={settings.layout.rotation}
-            padding={settings.layout.padding}
-          />
-        </div>
+      <div className="border border-border overflow-hidden" style={backgroundStyle}>
+        <MonthlyWordCloud
+          ref={wordCloudRef}
+          words={customizedWords}
+          backgroundColor={settings.colors.background}
+          backgroundImage={settings.backgroundImage}
+          fontFamily={settings.font.family}
+          spiral={settings.layout.spiral}
+          rotation={settings.layout.rotation}
+          padding={settings.layout.padding}
+        />
+      </div>
+
+      {/* 액션 버튼들 */}
+      <div className="flex items-center justify-end gap-2 mt-4 border border-border p-3">
+        <span className="text-xs text-muted-foreground mr-auto">커스터마이즈 & 공유</span>
+        <WordCloudCustomizer
+          settings={settings}
+          onSettingsChange={setSettings}
+        />
+        <WordCloudActions
+          wordCloudRef={wordCloudRef}
+          title={`${yearStr}년 ${monthName} 러닝 정산`}
+          yearMonth={yearMonth}
+        />
       </div>
     </div>
   );

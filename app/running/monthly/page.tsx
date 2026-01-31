@@ -1,153 +1,163 @@
-import { ArrowLeft, Download } from 'lucide-react';
-import Link from 'next/link';
-import { getMonthlyComparison } from '@/lib/running';
+import { Metadata } from 'next';
+import { getMonthlyComparison, getDistanceMilestone, getMonthlyZoneStats, generateMonthlyInsights } from '@/lib/running';
+import { WordItem } from '@/components/running/MonthlyWordCloud';
+import WordCloudClient from '@/components/running/WordCloudClient';
 
 export const dynamic = 'force-dynamic';
 
-export default async function MonthlyRunningPage() {
-  // 전월 기준
+function getDefaultYearMonth(): string {
   const now = new Date();
   const year = now.getFullYear();
-  const month = now.getMonth(); // 0-indexed
-  const yearMonth = month === 0 ? `${year - 1}-12` : `${year}-${month.toString().padStart(2, '0')}`;
+  const month = now.getMonth();
+  if (month === 0) {
+    return `${year - 1}-12`;
+  }
+  return `${year}-${month.toString().padStart(2, '0')}`;
+}
 
+function getPreviousMonth(yearMonth: string): string {
+  const [year, month] = yearMonth.split('-').map(Number);
+  if (month === 1) {
+    return `${year - 1}-12`;
+  }
+  return `${year}-${(month - 1).toString().padStart(2, '0')}`;
+}
+
+function getNextMonth(yearMonth: string): string {
+  const [year, month] = yearMonth.split('-').map(Number);
+  if (month === 12) {
+    return `${year + 1}-01`;
+  }
+  return `${year}-${(month + 1).toString().padStart(2, '0')}`;
+}
+
+interface PageProps {
+  searchParams: Promise<{ month?: string }>;
+}
+
+// OG 메타데이터 생성
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const yearMonth = params.month || getDefaultYearMonth();
+  const [yearStr, monthStr] = yearMonth.split('-');
+  const monthName = `${parseInt(monthStr)}월`;
+
+  return {
+    title: `${yearStr}년 ${monthName} 러닝 정산`,
+    description: `${yearStr}년 ${monthName} 월간 러닝 기록을 워드클라우드로 시각화합니다.`,
+    openGraph: {
+      title: `${yearStr}년 ${monthName} 러닝 정산 | when1.life`,
+      description: `${yearStr}년 ${monthName} 월간 러닝 기록을 워드클라우드로 시각화합니다.`,
+      images: [`/api/running/monthly/image/v5?month=${yearMonth}`],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: `${yearStr}년 ${monthName} 러닝 정산 | when1.life`,
+      description: `${yearStr}년 ${monthName} 월간 러닝 기록을 워드클라우드로 시각화합니다.`,
+      images: [`/api/running/monthly/image/v5?month=${yearMonth}`],
+    },
+  };
+}
+
+export default async function MonthlyPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const yearMonth = params.month || getDefaultYearMonth();
   const comparison = await getMonthlyComparison(yearMonth);
   const { current, changes } = comparison;
+  const milestone = getDistanceMilestone(current.totalDistance);
+  const trackLaps = Math.round((current.totalDistance * 1000) / 400);
+  const zoneStats = await getMonthlyZoneStats(yearMonth);
+  const insights = generateMonthlyInsights(comparison, zoneStats);
 
   const [yearStr, monthStr] = yearMonth.split('-');
-  const monthName = `${yearStr}년 ${parseInt(monthStr)}월`;
+  const monthName = `${parseInt(monthStr)}월`;
 
-  const formatChange = (value: number, suffix: string = '') => {
-    if (value === 0) return '-';
-    const sign = value > 0 ? '+' : '';
-    return `${sign}${value}${suffix}`;
+  // 색상 팔레트
+  const colors = {
+    white: '#fafafa',
+    green: '#22c55e',
+    red: '#ef4444',
+    blue: '#3b82f6',
+    orange: '#f59e0b',
+    gray: '#a3a3a3',
+    muted: '#525252',
   };
 
-  const designs = [
+  // 변화에 따른 색상
+  const getChangeColor = (value: number, inverse: boolean = false) => {
+    if (value === 0) return colors.muted;
+    const isPositive = inverse ? value < 0 : value > 0;
+    return isPositive ? colors.green : colors.red;
+  };
+
+  // 워드 클라우드 데이터 생성
+  const words: WordItem[] = [
+    // 제목
+    { text: `${monthName} 러닝 정산`, size: 32, color: colors.muted },
+
+    // 러닝 횟수 (총 N회)
+    { text: `총 ${current.runCount}회`, size: 75, color: colors.white },
     {
-      id: 'v4',
-      name: '시안 D: 좌우분할 + 히트맵',
-      description: 'B+C 조합, 사각형 히트맵 그리드',
-      url: `/api/running/monthly/image/v4?month=${yearMonth}`,
+      text: changes.runCountChange >= 0
+        ? `횟수 전월 대비 ${changes.runCountChange}회 증가`
+        : `횟수 전월 대비 ${Math.abs(changes.runCountChange)}회 감소`,
+      size: 24,
+      color: getChangeColor(changes.runCountChange)
     },
+
+    // 총 거리
+    { text: `총 ${current.totalDistance}km`, size: 85, color: colors.white },
     {
-      id: 'v5',
-      name: '시안 E: 인포그래픽',
-      description: '주간 바 차트 + 여정 시각화',
-      url: `/api/running/monthly/image/v5?month=${yearMonth}`,
+      text: changes.distanceChange >= 0
+        ? `거리 전월 대비 ${changes.distanceChange}% 증가`
+        : `거리 전월 대비 ${Math.abs(changes.distanceChange)}% 감소`,
+      size: 24,
+      color: getChangeColor(changes.distanceChange)
     },
+
+    // 마일스톤
+    { text: `${milestone.from}에서 ${milestone.to}까지`, size: 38, color: colors.blue },
+    { text: `안양종합운동장 ${trackLaps}바퀴`, size: 34, color: colors.blue },
+
+    // 페이스 (평균 페이스 통합)
+    { text: `평균 페이스 ${current.avgPace}`, size: 60, color: colors.white },
+    {
+      text: changes.paceChange <= 0
+        ? `페이스 전월 대비 ${Math.abs(changes.paceChange)}초 빨라짐`
+        : `페이스 전월 대비 ${changes.paceChange}초 느려짐`,
+      size: 24,
+      color: getChangeColor(changes.paceChange, true)
+    },
+
+    // 심박수 (평균 심박수)
+    ...(current.avgHr ? [
+      { text: `평균 심박수 ${current.avgHr}bpm`, size: 55, color: colors.white },
+      ...(changes.hrChange !== null ? [{
+        text: changes.hrChange <= 0
+          ? `심박수 전월 대비 ${Math.abs(changes.hrChange)}bpm 감소`
+          : `심박수 전월 대비 ${changes.hrChange}bpm 증가`,
+        size: 24,
+        color: getChangeColor(changes.hrChange, true)
+      }] : [])
+    ] : []),
+
+    // 동적 인사이트 (실제 데이터 기반)
+    ...insights.map(insight => ({
+      text: insight.text,
+      size: insight.size,
+      color: insight.color,
+    })),
   ];
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      {/* 헤더 */}
-      <div className="flex items-center gap-3 mb-8">
-        <Link
-          href="/running"
-          className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
-        >
-          <ArrowLeft className="w-4 h-4" />
-        </Link>
-        <div>
-          <h1 className="text-lg font-medium text-foreground">월간 러닝 리포트</h1>
-          <p className="text-xs text-muted-foreground mt-0.5">{monthName} 정산</p>
-        </div>
-      </div>
-
-      {/* 통계 요약 */}
-      <div className="border border-border p-6 mb-8">
-        <h2 className="text-sm font-medium text-foreground mb-4">이번 달 요약</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div>
-            <p className="text-2xl font-semibold text-foreground">{current.runCount}회</p>
-            <p className="text-xs text-muted-foreground">러닝 횟수</p>
-            <p className={`text-xs ${changes.runCountChange > 0 ? 'text-green-500' : changes.runCountChange < 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
-              {formatChange(changes.runCountChange, '회')} vs 전월
-            </p>
-          </div>
-          <div>
-            <p className="text-2xl font-semibold text-foreground">{current.totalDistance}km</p>
-            <p className="text-xs text-muted-foreground">총 거리</p>
-            <p className={`text-xs ${changes.distanceChange > 0 ? 'text-green-500' : changes.distanceChange < 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
-              {formatChange(changes.distanceChange, '%')} vs 전월
-            </p>
-          </div>
-          <div>
-            <p className="text-2xl font-semibold text-foreground">{current.avgPace}/km</p>
-            <p className="text-xs text-muted-foreground">평균 페이스</p>
-            <p className={`text-xs ${changes.paceChange < 0 ? 'text-green-500' : changes.paceChange > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
-              {changes.paceChange !== 0 ? `${changes.paceChange < 0 ? '-' : '+'}${Math.abs(changes.paceChange)}초` : '-'} vs 전월
-            </p>
-          </div>
-          <div>
-            <p className="text-2xl font-semibold text-foreground">{current.avgHr ? `${current.avgHr}` : '-'} bpm</p>
-            <p className="text-xs text-muted-foreground">평균 심박수</p>
-            <p className={`text-xs ${changes.hrChange !== null && changes.hrChange < 0 ? 'text-green-500' : changes.hrChange !== null && changes.hrChange > 0 ? 'text-red-500' : 'text-muted-foreground'}`}>
-              {changes.hrChange !== null ? formatChange(changes.hrChange, ' bpm') : '-'} vs 전월
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* 디자인 시안 비교 */}
-      <div className="mb-8">
-        <h2 className="text-sm font-medium text-foreground mb-4">🎨 디자인 시안 비교</h2>
-        <p className="text-xs text-muted-foreground mb-6">
-          2가지 디자인 중 원하는 스타일을 선택해주세요. 각 이미지를 클릭하면 원본 크기로 볼 수 있습니다.
-        </p>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {designs.map((design) => (
-            <div key={design.id} className="border border-border">
-              <div className="p-4 border-b border-border">
-                <h3 className="text-sm font-medium text-foreground">{design.name}</h3>
-                <p className="text-xs text-muted-foreground mt-1">{design.description}</p>
-              </div>
-              <div className="p-4 bg-neutral-950">
-                <a href={design.url} target="_blank" rel="noopener noreferrer">
-                  <img
-                    src={design.url}
-                    alt={design.name}
-                    className="w-full aspect-square object-contain hover:opacity-90 transition-opacity cursor-pointer"
-                  />
-                </a>
-              </div>
-              <div className="p-3 flex justify-center">
-                <a
-                  href={design.url}
-                  target="_blank"
-                  className="flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  <Download className="w-3 h-3" />
-                  다운로드
-                </a>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      {/* 텍스트 분석 (텔레그램용) */}
-      <div className="border border-border p-6">
-        <h2 className="text-sm font-medium text-foreground mb-3">📊 AI 분석 (텔레그램용)</h2>
-        <div className="text-sm text-muted-foreground leading-relaxed">
-          {changes.hrChange !== null && changes.hrChange < 0 ? (
-            <p>
-              심폐 기능이 눈에 띄게 향상되었습니다. 같은 페이스에서 심박수가 {Math.abs(changes.hrChange)}bpm
-              낮아졌어요. 이는 심장이 더 효율적으로 일하고 있다는 신호입니다.
-            </p>
-          ) : (
-            <p>심박수 데이터를 분석 중입니다.</p>
-          )}
-          <p className="mt-2">
-            {changes.distanceChange > 0 && `거리가 ${changes.distanceChange}% 증가했고, `}
-            {changes.runCountChange > 0
-              ? `러닝 횟수도 ${changes.runCountChange}회 늘었습니다.`
-              : '꾸준히 운동하고 있습니다.'}
-          </p>
-          <p className="mt-3 text-green-500">💡 다음 달 목표: 현재 페이스 유지하며 거리 늘리기</p>
-        </div>
-      </div>
-    </div>
+    <WordCloudClient
+      words={words}
+      yearMonth={yearMonth}
+      yearStr={yearStr}
+      monthName={monthName}
+      previousMonth={getPreviousMonth(yearMonth)}
+      nextMonth={getNextMonth(yearMonth)}
+      colors={colors}
+    />
   );
 }
