@@ -18,22 +18,23 @@ const jetbrainsMono = JetBrains_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL('https://when1.life'),
   title: {
-    default: 'when1life',
-    template: '%s | when1life',
+    default: 'Michael Kim (김도현) — Operations & AX',
+    template: '%s | Michael Kim',
   },
-  description: 'Michael (김도현) — Operations & AX Engineer. 경력·역량·성과를 묻고 답하세요.',
+  description:
+    '운영을 시스템으로 바꾸는 Operations & AX 빌더. 검증된 숫자와 프로젝트로 보여드립니다.',
   openGraph: {
-    title: 'when1life',
-    description: 'Michael (김도현) — Operations & AX Engineer',
+    title: 'Michael Kim (김도현) — Operations & AX',
+    description: '운영을 시스템으로 바꾸는 Operations & AX 빌더',
     url: 'https://when1.life',
-    siteName: 'when1life',
+    siteName: 'Michael Kim',
     locale: 'ko_KR',
     type: 'website',
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'when1life',
-    description: 'Michael (김도현) — Operations & AX Engineer',
+    title: 'Michael Kim (김도현) — Operations & AX',
+    description: '운영을 시스템으로 바꾸는 Operations & AX 빌더',
   },
 };
 

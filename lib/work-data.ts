@@ -21,6 +21,10 @@ export interface WorkProject {
   tech: string[];
   note?: string;
   demo?: { type: 'pipeline'; stages: PipelineStage[] };
+  // 경력기술서(/resume)용 맥락
+  company?: string;
+  period?: string;
+  role?: string;
 }
 
 export interface Bucket {
@@ -94,6 +98,9 @@ export interface WorkRow {
   tech: string[] | null;
   note: string | null;
   sort_order: number | null;
+  company: string | null;
+  period: string | null;
+  role: string | null;
 }
 
 export function mapRow(row: WorkRow): WorkProject {
@@ -111,5 +118,8 @@ export function mapRow(row: WorkRow): WorkProject {
     tech: row.tech ?? [],
     note: row.note ?? undefined,
     demo: DEMOS[row.slug],
+    company: row.company ?? undefined,
+    period: row.period ?? undefined,
+    role: row.role ?? undefined,
   };
 }

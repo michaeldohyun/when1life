@@ -20,6 +20,9 @@ interface Row {
   tech: string[];
   note: string | null;
   sort_order: number;
+  company: string | null;
+  period: string | null;
+  role: string | null;
 }
 
 const EMPTY: Row = {
@@ -36,6 +39,9 @@ const EMPTY: Row = {
   tech: [],
   note: '',
   sort_order: 0,
+  company: '',
+  period: '',
+  role: '',
 };
 
 const inputCls =
@@ -61,7 +67,7 @@ export default function AdminWorkPage() {
   }, []);
 
   const edit = (r: Row) => {
-    setForm({ ...EMPTY, ...r, note: r.note ?? '' });
+    setForm({ ...EMPTY, ...r, note: r.note ?? '', company: r.company ?? '', period: r.period ?? '', role: r.role ?? '' });
     setIsNew(false);
     setMsg(null);
   };
@@ -92,6 +98,9 @@ export default function AdminWorkPage() {
       evidence: form.evidence.filter((t) => t.trim()),
       tech: form.tech.filter((t) => t.trim()),
       note: form.note?.trim() ? form.note : null,
+      company: form.company?.trim() ? form.company : null,
+      period: form.period?.trim() ? form.period : null,
+      role: form.role?.trim() ? form.role : null,
       sort_order: Number(form.sort_order) || 0,
       updated_at: new Date().toISOString(),
     };
@@ -360,6 +369,37 @@ export default function AdminWorkPage() {
             {stringList('tags', '태그', 'AX')}
             {stringList('evidence', '검증·증거', 'DB 집계 53,810건')}
             {stringList('tech', '기술', 'TypeScript')}
+
+            {/* 경력기술서(/resume)용 맥락 */}
+            <div className="grid grid-cols-3 gap-3">
+              <div>
+                <label className={labelCls}>회사 (resume)</label>
+                <input
+                  value={form.company ?? ''}
+                  onChange={(e) => setForm({ ...form, company: e.target.value })}
+                  placeholder="에딧메이트 — ..."
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>기간</label>
+                <input
+                  value={form.period ?? ''}
+                  onChange={(e) => setForm({ ...form, period: e.target.value })}
+                  placeholder="2023 – 2026"
+                  className={inputCls}
+                />
+              </div>
+              <div>
+                <label className={labelCls}>역할</label>
+                <input
+                  value={form.role ?? ''}
+                  onChange={(e) => setForm({ ...form, role: e.target.value })}
+                  placeholder="서비스 운영 총괄"
+                  className={inputCls}
+                />
+              </div>
+            </div>
 
             <div>
               <label className={labelCls}>정직성 각주 (선택)</label>

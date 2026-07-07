@@ -2,7 +2,7 @@ import { clipperDb } from './supabase';
 import { mapRow, type WorkProject, type WorkRow } from './work-data';
 
 const COLUMNS =
-  'slug,bucket,title,one_liner,tags,problem,comparison,metric,how,evidence,tech,note,sort_order';
+  'slug,bucket,title,one_liner,tags,problem,comparison,metric,how,evidence,tech,note,sort_order,company,period,role';
 
 export async function getAllProjects(): Promise<WorkProject[]> {
   const { data, error } = await clipperDb
