@@ -21,10 +21,10 @@ export const metadata: Metadata = {
     default: 'when1life',
     template: '%s | when1life',
   },
-  description: 'AI-powered personal workflows - Clipper, Running Coach, Fasting Coach',
+  description: 'Michael (김도현) — Operations & AX Engineer. 경력·역량·성과를 묻고 답하세요.',
   openGraph: {
     title: 'when1life',
-    description: 'AI-powered personal workflows',
+    description: 'Michael (김도현) — Operations & AX Engineer',
     url: 'https://when1.life',
     siteName: 'when1life',
     locale: 'ko_KR',
@@ -33,7 +33,7 @@ export const metadata: Metadata = {
   twitter: {
     card: 'summary_large_image',
     title: 'when1life',
-    description: 'AI-powered personal workflows',
+    description: 'Michael (김도현) — Operations & AX Engineer',
   },
 };
 

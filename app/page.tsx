@@ -9,16 +9,16 @@ export default function Home() {
         </p>
         <nav className="flex items-center justify-center gap-4 text-xs">
           <Link
-            href="/workflows"
-            className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
-          >
-            Workflows
-          </Link>
-          <Link
             href="/about"
             className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
           >
             About
+          </Link>
+          <Link
+            href="/work"
+            className="text-muted-foreground hover:text-foreground transition-colors underline underline-offset-2"
+          >
+            Work
           </Link>
         </nav>
       </div>

@@ -49,7 +49,7 @@ export default async function Image() {
             marginTop: 24,
           }}
         >
-          AI-powered personal workflows
+          Operations &amp; AX Engineer
         </div>
 
         {/* Three dots */}
