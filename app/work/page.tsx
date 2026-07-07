@@ -1,15 +1,20 @@
 import { AboutChatWidget } from '@/components/about/AboutChatWidget';
-import { BUCKETS, projectsByBucket } from '@/lib/work-data';
+import { BUCKETS } from '@/lib/work-data';
+import { getAllProjects } from '@/lib/work-db';
 import { ArrowLeft, ArrowUpRight } from 'lucide-react';
 import Link from 'next/link';
 import type { Metadata } from 'next';
+
+export const dynamic = 'force-dynamic';
 
 export const metadata: Metadata = {
   title: 'Work',
   description: 'Michael (김도현)의 대표 작업 — BizOps 관점으로 구분한 포트폴리오.',
 };
 
-export default function WorkPage() {
+export default async function WorkPage() {
+  const projects = await getAllProjects();
+
   return (
     <div className="mx-auto max-w-3xl px-6 py-12">
       {/* Header */}
@@ -30,8 +35,8 @@ export default function WorkPage() {
 
       <div className="space-y-12">
         {BUCKETS.map((bucket) => {
-          const projects = projectsByBucket(bucket.key);
-          if (projects.length === 0) return null;
+          const items = projects.filter((p) => p.bucket === bucket.key);
+          if (items.length === 0) return null;
           return (
             <section key={bucket.key}>
               <div className="mb-4">
@@ -41,7 +46,7 @@ export default function WorkPage() {
                 </p>
               </div>
               <div className="grid sm:grid-cols-2 gap-3">
-                {projects.map((p) => (
+                {items.map((p) => (
                   <Link
                     key={p.slug}
                     href={`/work/${p.slug}`}
