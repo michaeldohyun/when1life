@@ -1,7 +1,7 @@
 import { clipperDb } from '@/lib/supabase';
 import { LinkifiedContent } from '@/components/ui/LinkifiedContent';
 import { AboutChatWidget } from '@/components/about/AboutChatWidget';
-import { ArrowLeft, ArrowUpRight } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
 // 동적 렌더링 강제 (DB 데이터 실시간 반영)
@@ -41,7 +41,7 @@ export default async function AboutPage() {
 
   if (!about) {
     return (
-      <div className="mx-auto max-w-3xl px-6 py-12">
+      <div className="mx-auto max-w-[52rem] px-6 py-12">
         <div className="flex items-center gap-3 mb-8">
           <Link
             href="/"
@@ -57,7 +57,7 @@ export default async function AboutPage() {
   }
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12">
+    <div className="mx-auto max-w-[52rem] px-6 py-12">
       {/* Header */}
       <div className="flex items-center gap-3 mb-8">
         <Link
@@ -86,7 +86,7 @@ export default async function AboutPage() {
               <LinkifiedContent
                 key={index}
                 text={paragraph}
-                className="text-sm text-foreground mb-3 leading-relaxed"
+                className="text-[15px] text-foreground mb-3 leading-relaxed"
               />
             ) : (
               <br key={index} />
@@ -98,16 +98,6 @@ export default async function AboutPage() {
       {/* Timeline */}
       {about.timeline && about.timeline.length > 0 && (
         <div className="border-t border-border pt-10">
-          <div className="flex items-center justify-between mb-8">
-            <h2 className="text-sm font-medium text-foreground">경력 타임라인</h2>
-            <Link
-              href="/work"
-              className="inline-flex items-center gap-1 text-xs text-muted-foreground hover:text-foreground transition-colors"
-            >
-              포트폴리오 보기
-              <ArrowUpRight className="w-3.5 h-3.5" />
-            </Link>
-          </div>
           <div className="relative pl-4">
             {/* 세로선 */}
             <div className="absolute left-0 top-1 bottom-1 w-px bg-border" />
@@ -120,11 +110,11 @@ export default async function AboutPage() {
                     <span className="text-xs text-muted-foreground font-medium tracking-wide">
                       {item.year}
                     </span>
-                    <p className="text-sm text-foreground font-medium mt-1">
+                    <p className="text-[15px] text-foreground font-medium mt-1">
                       {item.title}
                     </p>
                     {item.description && (
-                      <p className="text-xs text-muted-foreground mt-1 leading-relaxed">
+                      <p className="text-[13px] text-muted-foreground mt-1 leading-relaxed">
                         {item.description}
                       </p>
                     )}

@@ -42,7 +42,15 @@ export async function POST(req: Request) {
         status: 400,
       });
     }
-    if (messages.length > 40) {
+    // 대화당 질문 수 제한 — 초과 시 이메일 문의로 유도
+    const MAX_USER_MESSAGES = 5;
+    const userCount = messages.filter((m) => m.role === 'user').length;
+    if (userCount > MAX_USER_MESSAGES) {
+      return new Response(JSON.stringify({ error: 'limit_reached' }), {
+        status: 429,
+      });
+    }
+    if (messages.length > 20) {
       return new Response(JSON.stringify({ error: 'Conversation too long' }), {
         status: 400,
       });

@@ -3,7 +3,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { useChat } from '@ai-sdk/react';
 import { DefaultChatTransport } from 'ai';
-import { Send, Loader2, MessageCircle, X, Sparkles } from 'lucide-react';
+import { Send, Loader2, MessageCircle, X, Sparkles, Mail, Linkedin } from 'lucide-react';
+
+const MAX_QUESTIONS = 5;
+const EMAIL = 'michael.dohyun@gmail.com';
 
 const PRESETS = [
   '어떤 일을 해온 분인가요?',
@@ -30,6 +33,10 @@ export function AboutChatWidget() {
 
   const isBusy = status === 'submitted' || status === 'streaming';
   const started = messages.length > 0;
+  const usedQuestions = messages.filter((m) => m.role === 'user').length;
+  const remaining = Math.max(0, MAX_QUESTIONS - usedQuestions);
+  const limitReached = remaining === 0;
+  const mailHref = `mailto:${EMAIL}?subject=${encodeURIComponent('[when1.life] 문의')}&body=${encodeURIComponent('안녕하세요, 사이트에서 질문을 남깁니다.\n\n')}`;
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight });
@@ -63,7 +70,7 @@ export function AboutChatWidget() {
 
   const submit = (text: string) => {
     const trimmed = text.trim();
-    if (!trimmed || isBusy) return;
+    if (!trimmed || isBusy || limitReached) return;
     sendMessage({ text: trimmed });
     setInput('');
     setDynamicSuggestions([]);
@@ -89,13 +96,33 @@ export function AboutChatWidget() {
                 </p>
               </div>
             </div>
-            <button
-              onClick={() => setOpen(false)}
-              className="p-1 text-muted-foreground hover:text-foreground transition-colors"
-              aria-label="닫기"
-            >
-              <X className="w-4 h-4" />
-            </button>
+            <div className="flex items-center gap-0.5">
+              <a
+                href={mailHref}
+                className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="이메일로 문의"
+                title="이메일로 문의"
+              >
+                <Mail className="w-4 h-4" />
+              </a>
+              <a
+                href="https://www.linkedin.com/in/michaeldohyun"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="LinkedIn"
+                title="LinkedIn"
+              >
+                <Linkedin className="w-4 h-4" />
+              </a>
+              <button
+                onClick={() => setOpen(false)}
+                className="p-1.5 text-muted-foreground hover:text-foreground transition-colors"
+                aria-label="닫기"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
           </div>
 
           {/* 메시지 */}
@@ -157,7 +184,21 @@ export function AboutChatWidget() {
             )}
           </div>
 
-          {/* 입력 */}
+          {/* 입력 or 이메일 CTA */}
+          {limitReached ? (
+            <div className="p-3 border-t border-border text-center">
+              <p className="text-[11px] text-muted-foreground mb-2">
+                준비된 질문 횟수를 모두 사용했어요. 더 궁금한 점은 이메일로 편하게 물어봐 주세요.
+              </p>
+              <a
+                href={mailHref}
+                className="inline-flex items-center justify-center gap-1.5 w-full px-3 py-2 text-[13px] bg-foreground text-background hover:opacity-90 transition-opacity"
+              >
+                <Send className="w-3.5 h-3.5" />
+                이메일로 이어서 문의하기
+              </a>
+            </div>
+          ) : (
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -187,6 +228,12 @@ export function AboutChatWidget() {
               )}
             </button>
           </form>
+          )}
+          {!limitReached && started && (
+            <p className="px-3 pb-2 text-[10px] text-muted-foreground text-right">
+              남은 질문 {remaining}회
+            </p>
+          )}
         </div>
       )}
 

@@ -1,47 +1,156 @@
 import { AboutChatWidget } from '@/components/about/AboutChatWidget';
-import { getAllProjects } from '@/lib/work-db';
-import { ArrowRight, ArrowUpRight, Mail, Linkedin } from 'lucide-react';
+import { getHomeHero, type HeroDiagramBox } from '@/lib/content-db';
+import { ArrowRight, Mail, Linkedin } from 'lucide-react';
 import Link from 'next/link';
 
 export const dynamic = 'force-dynamic';
 
-// 대표 프로젝트 3개 (검증 효과 기준)
-const FEATURED_SLUGS = ['recruit-pipeline', 'lifecycle-watcher', 'solo-ops-transition'];
+function MultiLine({ text }: { text: string }) {
+  const lines = text.split('\n');
+  return (
+    <>
+      {lines.map((line, i) => (
+        <span key={i}>
+          {line}
+          {i < lines.length - 1 && <br />}
+        </span>
+      ))}
+    </>
+  );
+}
+
+// sub 문장 안에서 지정 문자열만 모노 강조
+function HighlightedSub({ text, highlight }: { text: string; highlight?: string }) {
+  if (!highlight || !text.includes(highlight)) return <>{text}</>;
+  const [pre, ...rest] = text.split(highlight);
+  return (
+    <>
+      {pre}
+      <span className="font-mono text-foreground">{highlight}</span>
+      {rest.join(highlight)}
+    </>
+  );
+}
+
+function DiagramBox({
+  box,
+  tone,
+}: {
+  box: HeroDiagramBox;
+  tone: 'before' | 'build' | 'after';
+}) {
+  const wrap =
+    tone === 'before'
+      ? 'border border-dashed border-border'
+      : tone === 'build'
+        ? 'border border-foreground'
+        : 'bg-foreground text-background';
+  const label =
+    tone === 'after' ? 'opacity-70' : 'text-muted-foreground';
+  const title = tone === 'before' ? 'text-muted-foreground' : tone === 'build' ? 'text-foreground' : '';
+  const desc = tone === 'after' ? 'opacity-80' : 'text-muted-foreground';
+  return (
+    <div className={`flex-1 px-4 py-4 ${wrap}`}>
+      <p className={`text-[11px] font-mono tracking-wide mb-2 ${label}`}>{box.label}</p>
+      <p className={`text-sm font-medium ${title}`}>{box.title}</p>
+      <p className={`text-[13px] mt-1.5 leading-relaxed ${desc}`}>
+        <MultiLine text={box.desc} />
+      </p>
+    </div>
+  );
+}
 
 export default async function Home() {
-  const projects = await getAllProjects();
-  const featured = FEATURED_SLUGS.map((s) => projects.find((p) => p.slug === s)).filter(
-    (p): p is NonNullable<typeof p> => Boolean(p),
-  );
+  const hero = await getHomeHero();
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
-      {/* Pitch */}
-      <section className="mb-14">
-        <h1 className="text-2xl sm:text-3xl font-medium text-foreground leading-snug">
-          운영을 시스템으로 바꾸는
-          <br />
-          Operations &amp; AX 빌더
-        </h1>
-        <p className="text-sm text-muted-foreground mt-5 leading-relaxed max-w-xl">
-          김도현 Michael Kim. IT 스타트업 12년 — 서비스 운영을 직접 총괄하다, 그
-          운영을 REST API·AI 에이전트로 대체하는 시스템을 직접 설계하고
-          구축했습니다. 모든 성과는 프로덕션 DB·로그로 검증된 숫자로만 말합니다.
+    <div className="mx-auto max-w-[52rem] px-6 py-16">
+      {/* Pitch — 결과 선언(Claim) → 증거 → 방식 */}
+      <section className="mb-12">
+        <p className="text-xs font-mono text-muted-foreground tracking-wide mb-3">
+          {hero.kicker}
         </p>
-        <div className="flex flex-wrap items-center gap-3 mt-6">
-          <Link
-            href="/work"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm bg-foreground text-background hover:opacity-90 transition-opacity"
-          >
-            포트폴리오 보기
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-          <Link
-            href="/resume"
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-sm text-foreground border border-border hover:border-foreground transition-colors"
-          >
-            경력기술서
-          </Link>
+        <h1 className="text-2xl sm:text-3xl font-medium text-foreground leading-snug">
+          <MultiLine text={hero.headline} />
+        </h1>
+        <p className="text-[15px] text-muted-foreground mt-5 leading-relaxed max-w-xl">
+          <HighlightedSub text={hero.sub} highlight={hero.subHighlight} />
+        </p>
+      </section>
+
+      {/* 수치 강조 카드 (visual='metrics') */}
+      {hero.visual === 'metrics' && (hero.metrics ?? []).length > 0 && (
+        <section className="mb-10">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            {(hero.metrics ?? []).map((m, i) =>
+              m.href ? (
+                <Link
+                  key={i}
+                  href={m.href}
+                  className="group border border-border px-5 py-6 hover:border-foreground transition-colors"
+                >
+                  <p className="text-2xl font-mono font-semibold text-foreground tracking-tight">
+                    {m.value}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                    {m.caption}
+                  </p>
+                </Link>
+              ) : (
+                <div key={i} className="border border-border px-5 py-6">
+                  <p className="text-2xl font-mono font-semibold text-foreground tracking-tight">
+                    {m.value}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-2 leading-relaxed">
+                    {m.caption}
+                  </p>
+                </div>
+              ),
+            )}
+          </div>
+        </section>
+      )}
+
+      {/* 전환 다이어그램 (visual='diagram') */}
+      {hero.visual !== 'none' && hero.visual !== 'metrics' && (
+      <section className="mb-10">
+        <div className="flex flex-col sm:flex-row items-stretch gap-2">
+          <DiagramBox box={hero.diagram.before} tone="before" />
+          <div className="flex sm:flex-col items-center justify-center px-1 text-muted-foreground">
+            <span className="hidden sm:block text-[10px] font-mono mb-1">
+              {hero.diagram.arrow1}
+            </span>
+            <ArrowRight className="w-4 h-4 rotate-90 sm:rotate-0" />
+          </div>
+          <DiagramBox box={hero.diagram.build} tone="build" />
+          <div className="flex sm:flex-col items-center justify-center px-1 text-muted-foreground">
+            <span className="hidden sm:block text-[10px] font-mono mb-1">
+              {hero.diagram.arrow2}
+            </span>
+            <ArrowRight className="w-4 h-4 rotate-90 sm:rotate-0" />
+          </div>
+          <DiagramBox box={hero.diagram.after} tone="after" />
+        </div>
+      </section>
+      )}
+
+      {/* CTA */}
+      <section className="mb-14">
+        <div className="flex flex-wrap items-center gap-3">
+          {(hero.ctas ?? []).map((cta, i) => (
+            <Link
+              key={`${cta.href}-${i}`}
+              href={cta.href}
+              className={
+                cta.style === 'primary'
+                  ? 'inline-flex items-center gap-1.5 px-4 py-2 text-sm bg-foreground text-background hover:opacity-90 transition-opacity'
+                  : 'inline-flex items-center gap-1.5 px-4 py-2 text-sm text-foreground border border-border hover:border-foreground transition-colors'
+              }
+            >
+              {cta.label}
+              {cta.style === 'primary' && <ArrowRight className="w-4 h-4" />}
+            </Link>
+          ))}
           <a
             href="mailto:michael.dohyun@gmail.com"
             className="inline-flex items-center gap-1.5 px-3 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -61,39 +170,9 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* 검증 숫자 스트립 */}
-      {featured.length > 0 && (
-        <section className="grid grid-cols-1 sm:grid-cols-3 border border-border divide-y sm:divide-y-0 sm:divide-x divide-border mb-14">
-          {featured.map((p) => (
-            <Link
-              key={p.slug}
-              href={`/work/${p.slug}`}
-              className="group px-5 py-6 hover:bg-muted/30 transition-colors"
-            >
-              <p className="text-2xl font-semibold text-foreground">{p.metric.value}</p>
-              <p className="text-[11px] text-muted-foreground mt-1.5 leading-relaxed">
-                {p.metric.caption}
-              </p>
-              <p className="inline-flex items-center gap-1 text-[11px] text-muted-foreground group-hover:text-foreground mt-3 transition-colors">
-                {p.title}
-                <ArrowUpRight className="w-3 h-3" />
-              </p>
-            </Link>
-          ))}
-        </section>
-      )}
-
-      {/* 한 줄 서사 + 챗봇 안내 */}
-      <section className="text-xs text-muted-foreground leading-relaxed space-y-2">
-        <p>
-          No-code로 사내 도구를 만들던 운영자에서, REST API·Edge Function·AI
-          에이전트를 직접 설계·코딩하는 단계까지. 요구정의 → 설계 → 구현 → QA →
-          배포 → 운영의 전 주기를 한 사람이 관통합니다.
-        </p>
-        <p>
-          우측 하단의 Q&amp;A 봇도 직접 만들었습니다 — 경력에 대해 무엇이든
-          물어보세요.
-        </p>
+      {/* 챗봇 안내 */}
+      <section className="text-sm text-muted-foreground leading-relaxed max-w-xl">
+        <p>{hero.chatLine}</p>
       </section>
 
       <AboutChatWidget />

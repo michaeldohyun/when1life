@@ -70,7 +70,7 @@ export default async function ResumePage() {
   const markdown = buildMarkdown(groups);
 
   return (
-    <div className="mx-auto max-w-3xl px-6 py-12 print:py-4">
+    <div className="mx-auto max-w-[52rem] px-6 py-12 print:py-4">
       {/* 문서 헤더 */}
       <div className="flex items-start justify-between gap-4 mb-2">
         <div>
@@ -101,7 +101,7 @@ export default async function ResumePage() {
         </a>
       </div>
 
-      <p className="text-sm text-muted-foreground leading-relaxed mb-10 print:mb-6">
+      <p className="text-[15px] text-muted-foreground leading-relaxed mb-10 print:mb-6 max-w-2xl">
         {SUMMARY}
       </p>
 
@@ -119,7 +119,7 @@ export default async function ResumePage() {
             {g.items.map((p) => (
               <article key={p.slug} className="break-inside-avoid">
                 <div className="flex items-baseline justify-between gap-3">
-                  <h3 className="text-sm font-medium text-foreground">{p.title}</h3>
+                  <h3 className="text-[15px] font-medium text-foreground">{p.title}</h3>
                   <Link
                     href={`/work/${p.slug}`}
                     className="inline-flex items-center gap-0.5 text-[10px] text-muted-foreground hover:text-foreground transition-colors print:hidden flex-shrink-0"
@@ -128,22 +128,22 @@ export default async function ResumePage() {
                     <ArrowUpRight className="w-3 h-3" />
                   </Link>
                 </div>
-                <dl className="mt-2 space-y-1.5 text-[13px] leading-relaxed">
+                <dl className="mt-2 space-y-1.5 text-sm leading-relaxed">
                   {p.problem && (
-                    <div className="grid grid-cols-[40px_1fr] gap-2">
-                      <dt className="text-[11px] text-muted-foreground pt-0.5">배경</dt>
+                    <div className="grid grid-cols-[48px_1fr] gap-2">
+                      <dt className="text-xs text-muted-foreground pt-0.5">배경</dt>
                       <dd className="text-muted-foreground">{p.problem}</dd>
                     </div>
                   )}
                   {p.how && (
-                    <div className="grid grid-cols-[40px_1fr] gap-2">
-                      <dt className="text-[11px] text-muted-foreground pt-0.5">수행</dt>
+                    <div className="grid grid-cols-[48px_1fr] gap-2">
+                      <dt className="text-xs text-muted-foreground pt-0.5">수행</dt>
                       <dd className="text-foreground">{p.how}</dd>
                     </div>
                   )}
                   {p.metric.value && (
-                    <div className="grid grid-cols-[40px_1fr] gap-2">
-                      <dt className="text-[11px] text-muted-foreground pt-0.5">성과</dt>
+                    <div className="grid grid-cols-[48px_1fr] gap-2">
+                      <dt className="text-xs text-muted-foreground pt-0.5">성과</dt>
                       <dd className="text-foreground font-medium">
                         {p.metric.value}
                         <span className="font-normal text-muted-foreground">
@@ -154,14 +154,14 @@ export default async function ResumePage() {
                     </div>
                   )}
                   {p.tech.length > 0 && (
-                    <div className="grid grid-cols-[40px_1fr] gap-2">
-                      <dt className="text-[11px] text-muted-foreground pt-0.5">기술</dt>
+                    <div className="grid grid-cols-[48px_1fr] gap-2">
+                      <dt className="text-xs text-muted-foreground pt-0.5">기술</dt>
                       <dd className="text-muted-foreground">{p.tech.join(', ')}</dd>
                     </div>
                   )}
                   {p.note && (
-                    <div className="grid grid-cols-[40px_1fr] gap-2">
-                      <dt className="text-[11px] text-muted-foreground pt-0.5">※</dt>
+                    <div className="grid grid-cols-[48px_1fr] gap-2">
+                      <dt className="text-xs text-muted-foreground pt-0.5">※</dt>
                       <dd className="text-[12px] text-muted-foreground">{p.note}</dd>
                     </div>
                   )}
@@ -175,7 +175,7 @@ export default async function ResumePage() {
       {/* 이전 경력 */}
       <section className="border-t border-border pt-5">
         <h2 className="text-xs font-medium text-muted-foreground mb-2">이전 경력</h2>
-        <p className="text-[13px] text-muted-foreground">{PRIOR_CAREER}</p>
+        <p className="text-sm text-muted-foreground">{PRIOR_CAREER}</p>
       </section>
     </div>
   );

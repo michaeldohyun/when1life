@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { Home, FileText, User, Settings, LogOut, X, Link2, Briefcase } from 'lucide-react';
+import { Home, FileText, User, Settings, LogOut, X, Link2, Briefcase, LayoutTemplate, BookOpen } from 'lucide-react';
 import { useAuth } from '@/contexts/AuthContext';
 
 interface AdminSidebarProps {
@@ -12,6 +12,8 @@ interface AdminSidebarProps {
 }
 
 const navigation = [
+  { name: 'Home', href: '/admin/home', icon: LayoutTemplate },
+  { name: 'Cases', href: '/admin/cases', icon: BookOpen },
   { name: 'About', href: '/admin/about', icon: User },
   { name: 'Work', href: '/admin/work', icon: Briefcase },
   { name: 'Clips', href: '/admin/clips', icon: FileText },
